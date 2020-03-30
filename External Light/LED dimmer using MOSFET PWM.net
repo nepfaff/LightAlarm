@@ -1,0 +1,16 @@
+* C:\Users\konta\Desktop\LightAlarm\External Light\LED dimmer using MOSFET PWM.asc
+MOSFET1 N003 N005 0 0 Si2316DS
+Vcc N001 0 12
+R1 N001 N002 50
+V§Arduino-PWM N004 0 PULSE(0 5 0 0 0 0.075 0.1)
+Rg N005 N004 100
+D§LED N002 N003 LUW-W5AP
+.model D D
+.lib C:\Users\konta\Documents\LTspiceXVII\lib\cmp\standard.dio
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\konta\Documents\LTspiceXVII\lib\cmp\standard.mos
+.tran 1
+* R1 determines current through LED\n \nCould use multiple LEDs in series
+.backanno
+.end

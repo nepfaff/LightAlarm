@@ -1,0 +1,23 @@
+Circuit: * C:\Users\konta\Desktop\LightAlarm\External Light\LED dimmer using MOSFET PWM.asc
+
+Limiting rise time of source v§arduino-pwm to 0.0025
+Limiting fall time of source v§arduino-pwm to 0.0025
+Direct Newton iteration for .op point succeeded.
+
+Date: Mon Mar 30 17:34:33 2020
+Total elapsed time: 0.189 seconds.
+
+tnom = 27
+temp = 27
+method = modified trap
+totiter = 8783
+traniter = 8761
+tranpoints = 2898
+accept = 2376
+rejected = 522
+matrix size = 12
+fillins = 0
+solver = Normal
+Matrix Compiler1: 526 bytes object code size  0.1/0.1/[0.1]
+Matrix Compiler2: off  [0.1]/0.1/0.1
+
