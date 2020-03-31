@@ -1,5 +1,5 @@
 * C:\Users\konta\Desktop\LightAlarm\External Light\LED dimmer using MOSFET PWM.asc
-MOSFET1 N003 N004 0 0 Si2316DS
+MOSFET1 N003 N004 0 0 IRF510
 Vcc N001 0 12
 R1 N001 N002 50
 V§Arduino-PWM N004 0 PULSE(0 5 0 0 0 0.075 0.1)
