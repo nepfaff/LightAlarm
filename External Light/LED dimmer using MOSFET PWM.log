@@ -2,22 +2,23 @@ Circuit: * C:\Users\konta\Desktop\LightAlarm\External Light\LED dimmer using MOS
 
 Limiting rise time of source v§arduino-pwm to 0.0025
 Limiting fall time of source v§arduino-pwm to 0.0025
+WARNING: Less than two connections to node N002.  This node is used by R2.
 Direct Newton iteration for .op point succeeded.
 
-Date: Tue Mar 31 12:39:34 2020
-Total elapsed time: 0.122 seconds.
+Date: Wed Apr 01 16:49:11 2020
+Total elapsed time: 0.134 seconds.
 
 tnom = 27
 temp = 27
 method = modified trap
-totiter = 7802
-traniter = 7782
-tranpoints = 2711
-accept = 2273
-rejected = 438
-matrix size = 11
+totiter = 7914
+traniter = 7894
+tranpoints = 2755
+accept = 2311
+rejected = 444
+matrix size = 14
 fillins = 0
 solver = Normal
-Matrix Compiler1: 476 bytes object code size  0.1/0.1/[0.1]
-Matrix Compiler2:      64 opcodes  0.1/[0.1]/0.1
+Matrix Compiler1: 626 bytes object code size  0.1/0.1/[0.1]
+Matrix Compiler2: off  [0.1]/0.1/0.1
 
