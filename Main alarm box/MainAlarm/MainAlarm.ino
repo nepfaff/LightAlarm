@@ -13,6 +13,7 @@ void loop() {
   //for general LCD display
   //probably good idea to allow keys 1-9 to select options but only always display 1 or 2 options from menu 
   //and assign key for displaying next two options
+ 
 }
 
 void digitalClockDisplay(){

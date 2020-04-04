@@ -7,12 +7,17 @@
 /*
     Functionality involving the current time
 */
-class ClockMode : public IMode
+class ClockMode : public IMode, public ILogger
 {
 private:
+    ILogger logger{};
+
+    int hour{};
+    int minutes{};
+
+    // utility function for digital clock display: prints preceding colon and leading 0
     void printDigits(int digits)
     {
-        // utility function for digital clock display: prints preceding colon and leading 0
         Serial.print(":");
         if (digits < 10)
             Serial.print('0');
@@ -20,6 +25,15 @@ private:
     }
 
 public:
+    ClockMode(ILogger _logger)
+        : logger{_logger} {}
+
+    void resetAll() override
+    {
+        hour = 0;
+        minutes = 0;
+    }
+
     int[2] askForNewTime()
     {
         int hour{}, minute{};
@@ -33,10 +47,13 @@ public:
         return [ hour, minute ];
     }
 
-    void changeTime(int hour, int minute)
+    void changeTime()
     {
+        int newTime[2] = askForNewTime();
+        int hour{newTime[0]}, minutes{newTime[1]};
+
         //hour, minute, second, day, month, year
-        setTime(hour, minute, 0, 0, 0, 0)
+        setTime(hour, minute, 0, 0, 0, 0);
     }
 
     void digitalClockDisplay()

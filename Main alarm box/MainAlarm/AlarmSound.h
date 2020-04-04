@@ -4,11 +4,23 @@
 #include "Arduino.h"
 
 //rings buzzers, plays sd audio files, etc.
-class AlarmSound
+class AlarmSound : public ILogger
 {
+private:
+    ILogger logger{};
+
 public:
-    void startRingingBuzzerAlarm() {} //enables buzzers
-    void stopRingingBuzzerAlarm() {}
+    AlarmSound(ILogger _logger)
+        : logger{_logger} {}
+
+    void startRingingBuzzerAlarm()
+    {
+        logger.logInfo("Starting to ring buzzer alarm");
+    } //enables buzzers
+    void stopRingingBuzzerAlarm()
+    {
+        logger.logInfo("Stopping to ring buzzer alarm");
+    }
 }
 
 #endif
