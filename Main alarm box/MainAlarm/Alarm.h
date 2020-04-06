@@ -6,6 +6,7 @@
 class Alarm
 {
 private:
+    int id;
     int hour;
     int minute;
     bool enabled;

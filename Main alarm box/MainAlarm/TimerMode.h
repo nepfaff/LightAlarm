@@ -7,14 +7,14 @@
 class TimerMode : public IMode, public ILogger
 {
 private:
-    int timerDurationMS{}; //duration of timer in milliseconds
-    int timeAtStartMS{};   //set this equal to millis when timer started
-    bool enabled{};
-    ILogger logger{};
+    int timerDurationMS; //duration of timer in milliseconds
+    int timeAtStartMS;   //set this equal to millis when timer started
+    bool enabled;
+    ILogger logger;
 
 public:
     TimerMode(ILogger _logger)
-        : logger{_logger} {}
+        : logger{_logger}, timerDurationMS{0}, timeAtStartMS{0}, enabled{false} {}
 
     void resetAll() override
     {

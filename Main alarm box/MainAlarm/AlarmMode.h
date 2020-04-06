@@ -11,8 +11,8 @@ class AlarmMode : public IMode, public ILogger
 private:
     const int maxAlarmQuantity{3};
 
-    vector<*Alarm> alarms{};
-    ILogger logger{};
+    vector<Alarm> alarms;
+    ILogger logger;
 
 public:
     AlarmMode(ILogger _logger)
@@ -23,8 +23,20 @@ public:
         alarms.clear();
     }
 
-    void enableExistingAlarm() {}
-    void disableExistingAlarm() {}
+    void enableExistingAlarm()
+    {
+        //get alarmNumber from keypad (use input validation)
+        int alarmNumber{}; //alarmNumber corresponds to position in alarms vector
+        alarms.at(alarmNumber)->setStatus(true);
+    }
+
+    void disableExistingAlarm()
+    {
+        //get alarmNumber from keypad (use input validation)
+        int alarmNumber{};
+        alarms.at(alarmNumber)->setStatus(false);
+    }
+
     bool createNewAlarm()
     {
         if (maxAlarmQuantity <= alarms.size())
@@ -41,9 +53,17 @@ public:
             int hour = 00;
             int minute = 00;
 
-            alarms.push_back(new Alarm(hour, minute, true));
+            alarms.emplace_back(hour, minute, true);
         }
     }
+
+    bool deleteExistingAlarm()
+    {
+        //get alarm number from input
+        int alarmNumber{};
+        alarms.erase(alarms.begin() + alarmNumber);
+    }
+
     void displayExistingAlarms()
     {
         for (auto alarm : alarms)
@@ -51,8 +71,21 @@ public:
             //log to LCD rather than Serial
             Serial.print("Alarm 1 => Time: ..., Status: ..."); //status is "Enabled" or "Disabled"
         }
-    }                          //time and status (enabled or not)
-    bool checkIfAlarmTime() {} //checks whether to ring alarm now (comparisson with current time)
+    }
+
+    //checks whether to ring sound system now (comparisson with current time)
+    //when true, need to ring sound system and disable alarm
+    bool checkIfAlarmTime(const Alarm &alarm, const ClockMode &clock)
+    {
+        if (alarm.getHour == clock.getHour && alarm.getMinute <= clock.getMinute)
+        { //check if alarm time is now or has just passed
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
 
 #endif

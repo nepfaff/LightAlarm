@@ -13,10 +13,11 @@ public:
     AlarmSound(ILogger _logger)
         : logger{_logger} {}
 
-    void startRingingBuzzerAlarm()
+    void startRingingBuzzerAlarm() //enables buzzers
     {
         logger.logInfo("Starting to ring buzzer alarm");
-    } //enables buzzers
+    }
+
     void stopRingingBuzzerAlarm()
     {
         logger.logInfo("Stopping to ring buzzer alarm");
