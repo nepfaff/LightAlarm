@@ -8,21 +8,21 @@
 #include "TimerMode.h"
 
 //logging service
-SerialLogger logger{};
+SerialLogger *logger;
 
 //user IO
-UserIO *io = new UserIO(&logger);
+UserIO *io;;
 
 //setup different modes
-ClockMode clockMode(&logger, io);
-AlarmMode alarmMode(&logger, io);
-TimerMode timerMode(&logger, io);
+ClockMode *clockMode;
+AlarmMode *alarmMode;
+TimerMode *timerMode;
 
 //mode container for polymorthism
 const byte modeNumber {
   3
 };
-IMode* modes[modeNumber] {&alarmMode, &timerMode, &clockMode};
+//IMode* modes[modeNumber] {&alarmMode, &timerMode, &clockMode};
 
 //current mode
 int currentMode{};
@@ -30,15 +30,20 @@ int currentMode{};
 void setup()
 {
   Serial.begin(9600);
+  logger = new SerialLogger();
+  io = new UserIO(logger);
+  clockMode = new ClockMode(logger, io);
+  alarmMode = new AlarmMode(logger, io);
+  timerMode = new TimerMode(logger, io);
 
   //set default time
-  clockMode.changeTime(0, 0);
+  clockMode->changeTime(0, 0);
 }
 
 void loop()
 {
   //display current time
-  clockMode.digitalClockDisplay();
+  clockMode->digitalClockDisplay();
 
   //display if an alarm is enabled
   //show by showing * in top right corner?
@@ -59,7 +64,7 @@ void loop()
     default:
       //mode 0
       //clock and different mode option display
-      io->setCursor(0, 2);
+      /*io->setCursor(0, 2);
       io->print("Select one:");
       io->setCursor(0, 1);
       for (int i{}; i < modeNumber; i++) {
@@ -68,7 +73,7 @@ void loop()
         io->print(" ");
         io->print(name);
         delay(500); //instead of using blocking delay, use interval checker to only replace mode name when specific interval is over
-      }
+      }*/
       break;
   }
 
