@@ -7,16 +7,16 @@
 #include "AlarmMode.h"
 #include "TimerMode.h"
 
-//user IO
-UserIO *io;
-
 //logging service
-SerialLogger *logger{};
+SerialLogger logger{};
+
+//user IO
+UserIO *io = new UserIO(&logger);
 
 //setup different modes
-ClockMode clockMode(logger, io);
-AlarmMode alarmMode(logger, io);
-TimerMode timerMode(logger, io);
+ClockMode clockMode(&logger, io);
+AlarmMode alarmMode(&logger, io);
+TimerMode timerMode(&logger, io);
 
 //mode container for polymorthism
 const byte modeNumber {
