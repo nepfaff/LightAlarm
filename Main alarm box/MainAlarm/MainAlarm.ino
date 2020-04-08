@@ -22,7 +22,7 @@ TimerMode *timerMode;
 const byte modeNumber {
   3
 };
-//IMode* modes[modeNumber] {&alarmMode, &timerMode, &clockMode};
+IMode* modes[modeNumber];
 
 //current mode
 int currentMode{};
@@ -30,11 +30,17 @@ int currentMode{};
 void setup()
 {
   Serial.begin(9600);
+
+  //initialize pointers (need to do this after Serial.begin(9600) for it to work)
   logger = new SerialLogger();
   io = new UserIO(logger);
   clockMode = new ClockMode(logger, io);
   alarmMode = new AlarmMode(logger, io);
   timerMode = new TimerMode(logger, io);
+  //IMode* modes[modeNumber] = {alarmMode, timerMode, clockMode};
+  modes[0] = alarmMode;
+  modes[1] = timerMode;
+  modes[2] = clockMode;
 
   //set default time
   clockMode->changeTime(0, 0);
@@ -47,7 +53,7 @@ void loop()
 
   //display if an alarm is enabled
   //show by showing * in top right corner?
-  
+
 
   //change functionality based on current mode
   switch (currentMode) {
@@ -64,16 +70,16 @@ void loop()
     default:
       //mode 0
       //clock and different mode option display
-      /*io->setCursor(0, 2);
+      io->setCursor(0, 2);
       io->print("Select one:");
-      io->setCursor(0, 1);
       for (int i{}; i < modeNumber; i++) {
         String name = modes[i]->getModeName();
+        io->setCursor(0, 3);
         io->print(i);
         io->print(" ");
         io->print(name);
-        delay(500); //instead of using blocking delay, use interval checker to only replace mode name when specific interval is over
-      }*/
+        delay(1000); //instead of using blocking delay, use interval checker to only replace mode name when specific interval is over
+      }
       break;
   }
 
