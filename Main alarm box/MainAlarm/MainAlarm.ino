@@ -37,13 +37,8 @@ void setup()
 
 void loop()
 {
-   //Serial.println("Test0");
-   logger->logInfo("Test0");
-   
   //display current time
   clockMode.digitalClockDisplay();
-
-  Serial.println("Test1");
 
   //display if an alarm is enabled
   //show by showing * in top right corner?

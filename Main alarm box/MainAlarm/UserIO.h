@@ -11,7 +11,7 @@
 /*
    Provides combined interface for input from keypad and output to LCD screen.
 */
-class UserIO : public ILogger
+class UserIO
 {
   private:
     ILogger *logger;
