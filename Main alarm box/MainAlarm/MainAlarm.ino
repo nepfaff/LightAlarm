@@ -1,10 +1,11 @@
-#include "Wire.h"
-#include "LiquidCrystal_I2C.h"
-#include "Keypad.h"
+#include "Vector.h"
 
+#include "IMode.h"
 #include "SerialLogger.h"
 #include "UserIO.h"
 #include "ClockMode.h"
+#include "AlarmMode.h"
+#include "TimerMode.h"
 
 //user IO
 UserIO *io;
@@ -14,6 +15,9 @@ SerialLogger *logger{};
 
 //setup different modes
 ClockMode clockMode(logger, io);
+
+//mode container for polymorthism 
+
 
 //current mode 
 int currentMode{};

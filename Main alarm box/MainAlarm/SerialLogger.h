@@ -11,14 +11,14 @@
 class SerialLogger : public ILogger
 {
   public:
-    virtual void logError(String msg, String errorLocation) override
+    virtual void logError(String msg, String errorLocation) const override
     {
       Serial.print("ERROR: ");
       Serial.println(msg);
       Serial.print("ERROR LOCATION: ");
       Serial.println(errorLocation);
     }
-    virtual void logInfo(String msg) override
+    virtual void logInfo(String msg) const override
     {
       Serial.print("Info: ");
       Serial.println(msg);

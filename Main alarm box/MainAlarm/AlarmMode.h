@@ -2,10 +2,12 @@
 #define AlarmMode_h
 
 #include "Arduino.h"
+#include "Vector.h"
 
 #include "Alarm.h"
 #include "IMode.h"
 #include "ILogger.h"
+#include "UserIO.h"
 
 //use current time (fuctions take ClockMode object as argument) and compare this with set time
 //provide multiple default alarms (start with 1-3). These are Alarm objects
@@ -16,12 +18,13 @@ class AlarmMode : public IMode
       3
     };
 
-    vector<Alarm> alarms; //need to change this to array as std not supported in arduino
+    Vector<Alarm> alarms; //need to change this to array as std not supported in arduino
     ILogger *logger;
+    UserIO *io;
 
   public:
-    AlarmMode(ILogger *_logger)
-      : logger{_logger} {}
+    AlarmMode(ILogger *_logger, UserIO *_io)
+      : logger{_logger}, io(_io), IMode("Alarm mode") {}
 
     void resetAll() override
     {
@@ -32,21 +35,21 @@ class AlarmMode : public IMode
     {
       //get alarmNumber from keypad (use input validation)
       int alarmNumber{}; //alarmNumber corresponds to position in alarms vector
-      alarms.at(alarmNumber)->setStatus(true);
+      alarms.at(alarmNumber).setStatus(true);
     }
 
     void disableExistingAlarm()
     {
       //get alarmNumber from keypad (use input validation)
       int alarmNumber{};
-      alarms.at(alarmNumber)->setStatus(false);
+      alarms.at(alarmNumber).setStatus(false);
     }
 
     bool createNewAlarm()
     {
       if (maxAlarmQuantity <= alarms.size())
       {
-        logger.logError("Cannot exceed maximum alarm quantity", "AlarmMode, createNewAlarm");
+        logger->logError("Cannot exceed maximum alarm quantity", "AlarmMode, createNewAlarm");
         //write some error to LCD
         return false;
       }
@@ -58,20 +61,21 @@ class AlarmMode : public IMode
         int hour = 00;
         int minute = 00;
 
-        alarms.emplace_back(hour, minute, true);
+        Alarm newAlarm(hour, minute, true);
+        alarms.push_back(newAlarm);
       }
     }
 
     bool deleteExistingAlarm()
     {
-      //get alarm number from input
+      //get alarm number from input (represents an index)
       int alarmNumber{};
-      alarms.erase(alarms.begin() + alarmNumber);
+      alarms.remove(alarmNumber);
     }
 
     void displayExistingAlarms()
     {
-      for (auto alarm : alarms)
+      for (int i{}; i<alarms.size(); i++)
       {
         //log to LCD rather than Serial
         Serial.print("Alarm 1 => Time: ..., Status: ..."); //status is "Enabled" or "Disabled"
@@ -82,7 +86,7 @@ class AlarmMode : public IMode
     //when true, need to ring sound system and disable alarm
     bool checkIfAlarmTime(const Alarm &alarm, const ClockMode &clock)
     {
-      if (alarm.getHour == clock.getHour && alarm.getMinute <= clock.getMinute)
+      if (alarm.getHour() == clock.getHour() && alarm.getMinute() <= clock.getMinute())
       { //check if alarm time is now or has just passed
         return true;
       }

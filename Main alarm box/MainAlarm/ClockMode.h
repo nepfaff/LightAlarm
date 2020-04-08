@@ -3,9 +3,6 @@
 
 #include "Arduino.h"
 #include "TimeLib.h"
-#include "Wire.h"
-#include "LiquidCrystal_I2C.h"
-#include "Keypad.h"
 
 #include "IMode.h"
 #include "ILogger.h"
@@ -19,14 +16,12 @@ class ClockMode : public IMode
   private:
     ILogger *logger;
     UserIO *io;
-    //LiquidCrystal_I2C *screen;
-    //Keypad keyIn;
 
     int hour{};
     int minute{};
 
     // utility function for digital clock display: prints preceding colon and leading 0
-    void printDigits(int digits, bool isFirst = false)
+    void printDigits(int digits, bool isFirst = false) const
     {
       if (!isFirst) {
         io->print(":");
@@ -39,7 +34,7 @@ class ClockMode : public IMode
 
   public:
     ClockMode(ILogger *_logger, UserIO *_io)
-      : logger{_logger}, io(_io) {}
+      : logger{_logger}, io(_io), IMode("Clock mode") {}
 
     void resetAll() override
     {
@@ -81,7 +76,7 @@ class ClockMode : public IMode
       setTime(hour, minute, 0, 0, 0, 0);
     }
 
-    void digitalClockDisplay()
+    void digitalClockDisplay() const
     {
       io->setCursor(0, 0);
       io->print("Current time: ");
@@ -90,12 +85,12 @@ class ClockMode : public IMode
       io->print(" ");
     }
 
-    int getHour()
+    int getHour() const
     {
       return hour;
     }
 
-    int getMinute()
+    int getMinute() const
     {
       return minute;
     }

@@ -5,8 +5,18 @@
 
 class IMode
 {
+  private:
+    //display name of mode
+    String modeName;
+
   public:
-    virtual ~IMode() {};
+    IMode(String _modeName)
+      : modeName{_modeName} {}
+    virtual ~IMode() {}
+
+    String getModeName() {
+      return modeName;
+    }
 
     //reset all internal storage to default values
     virtual void resetAll() = 0;

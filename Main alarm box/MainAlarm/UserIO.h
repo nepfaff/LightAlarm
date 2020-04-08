@@ -2,13 +2,14 @@
 #define UserIO_h
 
 #include "Arduino.h"
+#include "Wire.h"
 #include "LiquidCrystal_I2C.h"
 #include "Keypad.h"
 
 #include "ILogger.h"
 
 /*
-   Provides combined interface for input from keypad and output to LCD screen
+   Provides combined interface for input from keypad and output to LCD screen.
 */
 class UserIO : public ILogger
 {
@@ -83,7 +84,7 @@ class UserIO : public ILogger
 
 
     //Input functionality
-    char getKey() {
+    char getKey() const {
       return keyIn->getKey();
     }
 };

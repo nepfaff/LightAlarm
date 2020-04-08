@@ -5,6 +5,7 @@
 
 #include "IMode.h"
 #include "ILogger.h"
+#include "UserIO.h"
 
 //try to get time from keypad (hour, min, second), then convert into milliseconds and keep comparing with millis()
 class TimerMode : public IMode
@@ -14,14 +15,15 @@ class TimerMode : public IMode
     int timeAtStartMS;   //set this equal to millis when timer started
     bool enabled;
     ILogger *logger;
+    UserIO *io;
 
   public:
-    TimerMode(ILogger *_logger)
-      : logger{_logger}, timerDurationMS{0}, timeAtStartMS{0}, enabled{false} {}
+    TimerMode(ILogger *_logger, UserIO *_io)
+      : logger{_logger}, io(_io), IMode("Timer mode"), timerDurationMS{0}, timeAtStartMS{0}, enabled{false} {}
 
     void resetAll() override
     {
-      timeAtStartMs = 0;
+      timeAtStartMS = 0;
       timerDurationMS = 0;
       enabled = false;
     }
@@ -41,7 +43,7 @@ class TimerMode : public IMode
       timeAtStartMS = millis();
     } //reset timeAtStartMS
 
-    bool checkIfTimerFinished() //use result to ring alarm and display message on LCD (don't forget to reset timer once user pressed a key -> stop alarm ringing)
+    bool checkIfTimerFinished() const //use result to ring alarm and display message on LCD (don't forget to reset timer once user pressed a key -> stop alarm ringing)
     {
       //also considers rare case of millis() overflow
       if (enabled && (unsigned long)(millis() - timeAtStartMS) >= timerDurationMS)
