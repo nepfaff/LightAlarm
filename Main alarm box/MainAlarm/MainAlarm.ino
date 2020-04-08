@@ -15,11 +15,16 @@ SerialLogger *logger{};
 
 //setup different modes
 ClockMode clockMode(logger, io);
+AlarmMode alarmMode(logger, io);
+TimerMode timerMode(logger, io);
 
-//mode container for polymorthism 
+//mode container for polymorthism
+const byte modeNumber {
+  3
+};
+IMode* modes[modeNumber] {&alarmMode, &timerMode, &clockMode};
 
-
-//current mode 
+//current mode
 int currentMode{};
 
 void setup()
@@ -32,25 +37,43 @@ void setup()
 
 void loop()
 {
+   //Serial.println("Test0");
+   logger->logInfo("Test0");
+   
   //display current time
   clockMode.digitalClockDisplay();
 
+  Serial.println("Test1");
+
+  //display if an alarm is enabled
+  //show by showing * in top right corner?
+  
+
   //change functionality based on current mode
-  switch(currentMode){
-    case 0:
-      //clock and different mode option display
-      
-      break;
+  switch (currentMode) {
     case 1:
+      //alarm mode
       break;
     case 2:
+      //timer mode
       break;
     case 3:
+      //clock mode
+      //setting new time
       break;
     default:
-      logger->logError("The currentMode value doesn't correspond to any existing mode", "main loop, switch statement");
-      logger->logInfo("currentMode has been reset to 0");
-      currentMode = 0;
+      //mode 0
+      //clock and different mode option display
+      io->setCursor(0, 2);
+      io->print("Select one:");
+      io->setCursor(0, 1);
+      for (int i{}; i < modeNumber; i++) {
+        String name = modes[i]->getModeName();
+        io->print(i);
+        io->print(" ");
+        io->print(name);
+        delay(500); //instead of using blocking delay, use interval checker to only replace mode name when specific interval is over
+      }
       break;
   }
 

@@ -18,7 +18,7 @@ class AlarmMode : public IMode
       3
     };
 
-    Vector<Alarm> alarms; //need to change this to array as std not supported in arduino
+    Vector<Alarm> alarms; //probably better to exchange all Vectors with C style arrays of fixed size (this vector library doesn't work very well)
     ILogger *logger;
     UserIO *io;
 
