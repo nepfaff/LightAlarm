@@ -5,11 +5,11 @@
 
 class IMode
 {
-public:
-    virtual ~IMode();
+  public:
+    virtual ~IMode() {};
 
     //reset all internal storage to default values
-    void resetAll() = 0;
-}
+    virtual void resetAll() = 0;
+};
 
 #endif

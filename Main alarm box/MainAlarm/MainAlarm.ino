@@ -1,32 +1,56 @@
-#include <TimeLib.h>
+#include "Wire.h"
+#include "LiquidCrystal_I2C.h"
+#include "Keypad.h"
 
+#include "SerialLogger.h"
+#include "UserIO.h"
+#include "ClockMode.h"
 
-void setup() {
+//user IO
+UserIO *io;
+
+//logging service
+SerialLogger *logger{};
+
+//setup different modes
+ClockMode clockMode(logger, io);
+
+//current mode 
+int currentMode{};
+
+void setup()
+{
   Serial.begin(9600);
-  
-  //time, min, sec, date, month, year
-  setTime(14, 27, 00, 14, 12, 2015);
+
+  //set default time
+  clockMode.changeTime(0, 0);
 }
 
-void loop() {
-  digitalClockDisplay();
+void loop()
+{
+  //display current time
+  clockMode.digitalClockDisplay();
+
+  //change functionality based on current mode
+  switch(currentMode){
+    case 0:
+      //clock and different mode option display
+      
+      break;
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+    default:
+      logger->logError("The currentMode value doesn't correspond to any existing mode", "main loop, switch statement");
+      logger->logInfo("currentMode has been reset to 0");
+      currentMode = 0;
+      break;
+  }
+
   //for general LCD display
-  //probably good idea to allow keys 1-9 to select options but only always display 1 or 2 options from menu 
+  //probably good idea to allow keys 1-9 to select options but only always display 1 or 2 options from menu
   //and assign key for displaying next two options
- 
-}
-
-void digitalClockDisplay(){
-  // digital clock display of the time
-  Serial.print(hour());
-  printDigits(minute());
-  Serial.println("");
-}
-
-void printDigits(int digits){
-  // utility function for digital clock display: prints preceding colon and leading 0
-  Serial.print(":");
-  if(digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
 }

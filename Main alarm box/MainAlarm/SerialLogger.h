@@ -3,21 +3,26 @@
 
 #include "Arduino.h"
 
-class SerialLogger : ILogger
+#include "ILogger.h"
+
+/*
+    Logging service using Arduino's serial 9600 communication channel
+*/
+class SerialLogger : public ILogger
 {
-public:
+  public:
     virtual void logError(String msg, String errorLocation) override
     {
-        Serial.print("ERROR: ");
-        Serial.prinln(msg);
-        Serial.print("ERROR LOCATION: ");
-        Serial.println(errorLocation);
+      Serial.print("ERROR: ");
+      Serial.println(msg);
+      Serial.print("ERROR LOCATION: ");
+      Serial.println(errorLocation);
     }
     virtual void logInfo(String msg) override
     {
-        Serial.print("Info: ");
-        Serial.println(msg);
+      Serial.print("Info: ");
+      Serial.println(msg);
     }
-}
+};
 
 #endif
