@@ -9,7 +9,7 @@
 SerialLogger *logger;
 
 //user IO
-UserIO *io;;
+UserIO *io;
 
 //setup different modes
 ClockMode *clockMode;
@@ -23,7 +23,7 @@ const byte modeNumber {
 IMode* modes[modeNumber];
 
 //current mode
-int currentMode{};
+int currentMode{0};
 
 void setup()
 {
@@ -54,18 +54,7 @@ void loop()
 
   //change functionality based on current mode
   switch (currentMode) {
-    case 1:
-      //alarm mode
-      break;
-    case 2:
-      //timer mode
-      break;
-    case 3:
-      //clock mode
-      //setting new time
-      break;
-    default:
-      //mode 0
+    case 0:
       //clock and different mode option display
       io->setCursor(0, 2);
       io->print("Select one:");
@@ -77,6 +66,21 @@ void loop()
         io->print(name);
         delay(1000); //instead of using blocking delay, use interval checker to only replace mode name when specific interval is over
       }
+      break;
+    case 1:
+      //alarm mode
+      break;
+    case 2:
+      //timer mode
+      //setting new time
+      break;
+    case 3:
+      //clock mode
+      break;
+    default:
+      logger->logError("Tried to access non existing mode", "MainAlarm, switch statement");
+      currentMode = 0;
+      logger->logInfo("Switched mode to default mode 0");
       break;
   }
 
