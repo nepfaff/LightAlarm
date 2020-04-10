@@ -12,6 +12,8 @@ class Alarm
     bool enabled;
     //could pottetially add soundrack name to select from sd card
   public:
+    Alarm()
+      : hour{0}, minute{0}, enabled{false} {}
     Alarm(int _hour, int _minute, bool _enabled)
       : hour{_hour}, minute{_minute}, enabled{_enabled} {}
 

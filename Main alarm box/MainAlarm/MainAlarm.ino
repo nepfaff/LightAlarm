@@ -1,5 +1,3 @@
-#include "Vector.h"
-
 #include "IMode.h"
 #include "SerialLogger.h"
 #include "UserIO.h"
@@ -35,9 +33,8 @@ void setup()
   logger = new SerialLogger();
   io = new UserIO(logger);
   clockMode = new ClockMode(logger, io);
-  alarmMode = new AlarmMode(logger, io);
+  alarmMode = new AlarmMode(logger, io, clockMode);
   timerMode = new TimerMode(logger, io);
-  //IMode* modes[modeNumber] = {alarmMode, timerMode, clockMode};
   modes[0] = alarmMode;
   modes[1] = timerMode;
   modes[2] = clockMode;
