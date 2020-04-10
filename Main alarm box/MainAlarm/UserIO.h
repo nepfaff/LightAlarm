@@ -21,7 +21,7 @@ class UserIO
   public:
     UserIO(ILogger *_logger, Keypad *_keypad)
       : logger{_logger}, keyIn{_keypad} {
-      
+
       //LCD screen setup
       screen = new LiquidCrystal_I2C(0x27, 20, 4);
       screen->init();
@@ -75,12 +75,14 @@ class UserIO
     char getKey() const {
       return keyIn->getKey();
     }
-    
-    int getValidModeInt(const int modeNumber) const{
+
+    int getValidModeInt(const int modeNumber) const {
       char key = keyIn->getKey();
-      if(isdigit(key)){
+      if (!key) {
+        return 0;
+      } else if (isdigit(key)) {
         int num = atoi(key);
-        if(num < modeNumber){
+        if (num < modeNumber) {
           return num;
         }
       }
