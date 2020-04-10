@@ -5,6 +5,19 @@
 #include "AlarmMode.h"
 #include "TimerMode.h"
 
+//keypad setup (needs to be prior to Setup, hence cannot do it inside UserIO constructor)
+const byte rows = 4;
+const byte cols = 4;
+char keys[rows][cols] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+byte rowPins[rows] {49, 48, 47, 46};
+byte colPins[cols] {53, 52, 51, 50};
+Keypad *keyIn = new Keypad(makeKeymap(keys), rowPins, colPins, rows, cols);
+
 //logging service
 SerialLogger *logger;
 
@@ -18,8 +31,8 @@ TimerMode *timerMode;
 
 //mode container for polymorthism
 const byte modeNumber {
-  3
-};
+  4
+}; //default mode also counts as mode (see switch statement)
 IMode* modes[modeNumber];
 
 //current mode
@@ -28,7 +41,7 @@ int currentMode{0};
 //default display of modes on screen (mode 0)
 int displayModeIntervalMS{1500}; //determines time between displaying different mode options on screen
 unsigned long previousMillis{};
-int currentDisplayedMode{};
+int currentDisplayedMode{1}; //don't display default mode 0
 
 void setup()
 {
@@ -36,13 +49,14 @@ void setup()
 
   //initialize pointers (need to do this after Serial.begin(9600) for it to work)
   logger = new SerialLogger();
-  io = new UserIO(logger);
+  io = new UserIO(logger, keyIn);
   clockMode = new ClockMode(logger, io);
   alarmMode = new AlarmMode(logger, io, clockMode);
   timerMode = new TimerMode(logger, io);
-  modes[0] = alarmMode;
-  modes[1] = timerMode;
-  modes[2] = clockMode;
+  //leave modes[0] empty as this represents the default mode
+  modes[1] = alarmMode;
+  modes[2] = timerMode;
+  modes[3] = clockMode;
 
   //set default time
   clockMode->changeTime(0, 0);
@@ -56,7 +70,8 @@ void loop()
 
   //change functionality based on current mode
   if (currentMode != 0) {
-    currentDisplayedMode = 0;
+    //reset currentDisplayMode to make sure that start in order when back at mode 0
+    currentDisplayedMode = 1;
   }
   switch (currentMode) {
     case 0:
@@ -76,14 +91,17 @@ void loop()
         io->print(name);
 
         //decide which mode will be displayed next
-        if (currentDisplayedMode < modeNumber-1) {
+        if (currentDisplayedMode < modeNumber - 1) {
           currentDisplayedMode++;
         } else {
-          currentDisplayedMode = 0;
+          currentDisplayedMode = 1;
         }
 
         previousMillis = currentMillis; //restart display mode interval
       }
+
+      //act on user input (based on mode display)
+      currentMode = io->getValidModeInt(modeNumber);
       break;
     case 1:
       //alarm mode

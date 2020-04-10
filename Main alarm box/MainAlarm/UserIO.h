@@ -19,21 +19,9 @@ class UserIO
     Keypad *keyIn;
 
   public:
-    UserIO(ILogger *_logger)
-      : logger{_logger} {
-      //keypad setup
-      const byte rows = 4;
-      const byte cols = 4;
-      char keys[rows][cols] = {
-        {'1', '2', '3', 'A'},
-        {'4', '5', '6', 'B'},
-        {'7', '8', '9', 'C'},
-        {'*', '0', '#', 'D'}
-      };
-      byte rowPins[rows] {49, 48, 47, 46};
-      byte colPins[cols] {53, 52, 51, 50};
-      keyIn = new Keypad(makeKeymap(keys), rowPins, colPins, rows, cols);
-
+    UserIO(ILogger *_logger, Keypad *_keypad)
+      : logger{_logger}, keyIn{_keypad} {
+      
       //LCD screen setup
       screen = new LiquidCrystal_I2C(0x27, 20, 4);
       screen->init();
@@ -86,6 +74,19 @@ class UserIO
     //Input functionality
     char getKey() const {
       return keyIn->getKey();
+    }
+    
+    int getValidModeInt(const int modeNumber) const{
+      char key = keyIn->getKey();
+      if(isdigit(key)){
+        int num = atoi(key);
+        if(num < modeNumber){
+          return num;
+        }
+      }
+      logger->logError("Entered key doesn't correspond to a mode", "UserIO, getValidModeInt");
+      logger->logInfo("Back at default mode");
+      return 0; //0 indicates default mode
     }
 };
 

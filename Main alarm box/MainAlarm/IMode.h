@@ -10,6 +10,8 @@ class IMode
     String modeName;
 
   public:
+    IMode()
+      : modeName{"Unspecified"} {}
     IMode(String _modeName)
       : modeName{_modeName} {}
     virtual ~IMode() {}
