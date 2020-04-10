@@ -73,7 +73,7 @@ void loop()
     //reset currentDisplayMode to make sure that start in order when back at mode 0
     currentDisplayedMode = 1;
   }
-  if (currentMode == 0) {
+  if (currentMode == 0) { //default mode
     //display current time
     io->setCursor(0, 0);
     clockMode->digitalClockDisplay();
@@ -101,7 +101,23 @@ void loop()
 
     //act on user input (based on mode display)
     currentMode = io->getValidModeInt(modeNumber);
-  } else if (currentMode == 1) {
+  } else if (currentMode == 1) { //alarm mode
+    io->clearScreen();
+    currentMode = 0;
+  } else if (currentMode == 2) { //timer mode
+    io->clearScreen();
+    currentMode = 0;
+  } else if (currentMode == 3) { //clock mode
+    io->clearScreen();
+    
+    //display current time
+    io->setCursor(0, 0);
+    clockMode->digitalClockDisplay();
+
+    //set new time based on user input
+    clockMode->changeTimeFromUserInput();
+    
+    currentMode = 0;
     io->clearScreen();
   } else {
     logger->logError("Tried to access non existing mode", "MainAlarm, switch statement");

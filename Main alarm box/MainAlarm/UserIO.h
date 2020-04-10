@@ -76,6 +76,22 @@ class UserIO
       return keyIn->getKey();
     }
 
+    bool enteredHash(){
+      if(keyIn->getKey() == '#'){
+        return true;
+      }
+      return false;
+    }
+
+    char getValidDigitOrHashBlocking(){
+      char key = keyIn->waitForKey();
+      if(isdigit(key) || key == '#'){
+        return key;
+      }
+       logger->logInfo("Key not a valid input");
+       return 0;
+    }
+
     int getValidModeInt(const int modeNumber) const {
       char key = keyIn->getKey();
       if (!key) {
@@ -86,7 +102,7 @@ class UserIO
           return num;
         }
       }
-      logger->logError("Entered key doesn't correspond to a mode", "UserIO, getValidModeInt");
+      logger->logInfo("Entered key doesn't correspond to a mode");
       logger->logInfo("Back at default mode");
       return 0; //0 indicates default mode
     }
