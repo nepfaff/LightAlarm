@@ -25,6 +25,11 @@ IMode* modes[modeNumber];
 //current mode
 int currentMode{0};
 
+//default display of modes on screen (mode 0)
+int displayModeIntervalMS{1500}; //determines time between displaying different mode options on screen
+unsigned long previousMillis{};
+int currentDisplayedMode{};
+
 void setup()
 {
   Serial.begin(9600);
@@ -45,26 +50,39 @@ void setup()
 
 void loop()
 {
-  //display current time
-  clockMode->digitalClockDisplay();
-
   //display if an alarm is enabled
   //show by showing * in top right corner?
 
 
   //change functionality based on current mode
+  if (currentMode != 0) {
+    currentDisplayedMode = 0;
+  }
   switch (currentMode) {
     case 0:
-      //clock and different mode option display
-      io->setCursor(0, 2);
-      io->print("Select one:");
-      for (int i{}; i < modeNumber; i++) {
-        String name = modes[i]->getModeName();
+      //display current time
+      io->setCursor(0, 0);
+      clockMode->digitalClockDisplay();
+
+      //display different mode options
+      unsigned long currentMillis = millis();
+      if ((unsigned long)(currentMillis - previousMillis) >= displayModeIntervalMS) {
+        io->setCursor(0, 2);
+        io->print("Select one:");
+        String name = modes[currentDisplayedMode]->getModeName();
         io->setCursor(0, 3);
-        io->print(i);
-        io->print(" ");
+        io->print(currentDisplayedMode);
+        io->print(". ");
         io->print(name);
-        delay(1000); //instead of using blocking delay, use interval checker to only replace mode name when specific interval is over
+
+        //decide which mode will be displayed next
+        if (currentDisplayedMode < modeNumber-1) {
+          currentDisplayedMode++;
+        } else {
+          currentDisplayedMode = 0;
+        }
+
+        previousMillis = currentMillis; //restart display mode interval
       }
       break;
     case 1:
