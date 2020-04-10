@@ -101,15 +101,18 @@ void loop()
 
     //act on user input (based on mode display)
     currentMode = io->getValidModeInt(modeNumber);
+    if(currentMode != 0){
+      io->clearScreen();
+    }
   } else if (currentMode == 1) { //alarm mode
-    io->clearScreen();
-    currentMode = 0;
+    alarmMode->displayOptions();
+    //alarmMode->selectOption();
+    
+    //io->clearScreen();
+    //currentMode = 0;
   } else if (currentMode == 2) { //timer mode
-    io->clearScreen();
     currentMode = 0;
   } else if (currentMode == 3) { //clock mode
-    io->clearScreen();
-    
     //display current time
     io->setCursor(0, 0);
     clockMode->digitalClockDisplay();

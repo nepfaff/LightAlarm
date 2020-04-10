@@ -16,9 +16,14 @@ class AlarmMode : public IMode
     const static int maxAlarmQuantity {
       3
     };
-    int currentAlarmQuantity{};
+    const static int numberOfConfigurationOptions{5};
+    unsigned long previousAlarmMillis{};
+    int currentDisplayedOption{};
 
+    int currentAlarmQuantity{};
+    String optionNames[numberOfConfigurationOptions] {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
     Alarm alarms[maxAlarmQuantity] {};
+
     ILogger *logger;
     UserIO *io;
     ClockMode *clock;
@@ -34,6 +39,31 @@ class AlarmMode : public IMode
         alarms[i] = {};
       }
       currentAlarmQuantity = 0;
+    }
+
+    void displayOptions() {
+      const int displayOptionsIntervalMS{3000};
+
+      //display different alarm mode options
+      unsigned long currentAlarmMillis = millis();
+      if ((unsigned long)(currentAlarmMillis - previousAlarmMillis) >= displayOptionsIntervalMS) {
+        io->clearScreen();
+        io->setCursor(0, 0);
+        io->print("Select one (#=Quit):");
+        for (int i{1}; i < 4 && currentDisplayedOption < numberOfConfigurationOptions; i++) {
+          String optionName = optionNames[currentDisplayedOption];
+          io->setCursor(0, i);
+          io->print(optionName);
+          currentDisplayedOption++;
+        }
+
+        //check if need to rollover to first option
+        if (currentDisplayedOption > numberOfConfigurationOptions - 1) {
+          currentDisplayedOption = 0;
+        }
+
+        previousAlarmMillis = currentAlarmMillis; //restart display option interval
+      }
     }
 
     void enableExistingAlarm()
