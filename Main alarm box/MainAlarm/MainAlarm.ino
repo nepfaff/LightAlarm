@@ -73,54 +73,39 @@ void loop()
     //reset currentDisplayMode to make sure that start in order when back at mode 0
     currentDisplayedMode = 1;
   }
-  switch (currentMode) {
-    case 0:
-      //display current time
-      io->setCursor(0, 0);
-      clockMode->digitalClockDisplay();
+  if (currentMode == 0) {
+    //display current time
+    io->setCursor(0, 0);
+    clockMode->digitalClockDisplay();
 
-      //display different mode options
-      unsigned long currentMillis = millis();
-      if ((unsigned long)(currentMillis - previousMillis) >= displayModeIntervalMS) {
-        io->setCursor(0, 2);
-        io->print("Select one:");
-        String name = modes[currentDisplayedMode]->getModeName();
-        io->setCursor(0, 3);
-        io->print(currentDisplayedMode);
-        io->print(". ");
-        io->print(name);
+    //display different mode options
+    unsigned long currentMillis = millis();
+    if ((unsigned long)(currentMillis - previousMillis) >= displayModeIntervalMS) {
+      io->setCursor(0, 2);
+      io->print("Select one:");
+      String name = modes[currentDisplayedMode]->getModeName();
+      io->setCursor(0, 3);
+      io->print(currentDisplayedMode);
+      io->print(". ");
+      io->print(name);
 
-        //decide which mode will be displayed next
-        if (currentDisplayedMode < modeNumber - 1) {
-          currentDisplayedMode++;
-        } else {
-          currentDisplayedMode = 1;
-        }
-
-        previousMillis = currentMillis; //restart display mode interval
+      //decide which mode will be displayed next
+      if (currentDisplayedMode < modeNumber - 1) {
+        currentDisplayedMode++;
+      } else {
+        currentDisplayedMode = 1;
       }
 
-      //act on user input (based on mode display)
-      currentMode = io->getValidModeInt(modeNumber);
-      break;
-    case 1:
-      //alarm mode
-      break;
-    case 2:
-      //timer mode
-      //setting new time
-      break;
-    case 3:
-      //clock mode
-      break;
-    default:
-      logger->logError("Tried to access non existing mode", "MainAlarm, switch statement");
-      currentMode = 0;
-      logger->logInfo("Switched mode to default mode 0");
-      break;
-  }
+      previousMillis = currentMillis; //restart display mode interval
+    }
 
-  //for general LCD display
-  //probably good idea to allow keys 1-9 to select options but only always display 1 or 2 options from menu
-  //and assign key for displaying next two options
+    //act on user input (based on mode display)
+    currentMode = io->getValidModeInt(modeNumber);
+  } else if (currentMode == 1) {
+    io->clearScreen();
+  } else {
+    logger->logError("Tried to access non existing mode", "MainAlarm, switch statement");
+    currentMode = 0;
+    logger->logInfo("Switched mode to default mode 0");
+  }
 }

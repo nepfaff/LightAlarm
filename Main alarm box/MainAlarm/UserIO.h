@@ -81,7 +81,7 @@ class UserIO
       if (!key) {
         return 0;
       } else if (isdigit(key)) {
-        int num = atoi(key);
+        int num = (int)key - 48;
         if (num < modeNumber) {
           return num;
         }
