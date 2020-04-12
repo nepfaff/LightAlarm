@@ -17,18 +17,6 @@ class ClockMode : public IMode
     ILogger *logger;
     UserIO *io;
 
-    // utility function for digital clock display: prints preceding colon and leading 0
-    void printDigits(int digits, bool isFirst = false) const
-    {
-      if (!isFirst) {
-        io->print(":");
-      }
-      if (digits < 10) {
-        io->print("0");
-      }
-      io->print(digits);
-    }
-
     bool askForTimeDigit(String &timeContainer, int maxDigit) {
       char input = io->getValidDigitOrHashBlocking();
       if (input == '#') {
@@ -133,8 +121,8 @@ class ClockMode : public IMode
     {
       io->setCursor(0, 0);
       io->print("Current time: ");
-      printDigits(hour(), true);
-      printDigits(minute());
+      io->printDigits(hour(), true);
+      io->printDigits(minute());
       io->print(" ");
     }
 

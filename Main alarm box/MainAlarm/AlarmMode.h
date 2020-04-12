@@ -16,13 +16,15 @@ class AlarmMode : public IMode
     const static int maxAlarmQuantity {
       3
     };
-    const static int numberOfOptions{5};
-    unsigned long previousAlarmMillis{};
-    int currentDisplayedOption{};
-
     int currentAlarmQuantity{};
+    int currentDisplayedAlarm{};
+    Alarm alarms[maxAlarmQuantity] {}; //position 0 in array holds alarm with number 1
+
+    unsigned long previousAlarmMillis{};
+
+    const static int numberOfOptions{5};
     const String optionNames[numberOfOptions] {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
-    Alarm alarms[maxAlarmQuantity] {};
+    int currentDisplayedOption{};
 
     ILogger *logger;
     UserIO *io;
@@ -58,7 +60,7 @@ class AlarmMode : public IMode
         }
 
         //check if need to rollover to first option
-        if (currentDisplayedOption > numberOfOptions - 1) {
+        if (currentDisplayedOption >= numberOfOptions) {
           currentDisplayedOption = 0;
         }
 
@@ -67,11 +69,13 @@ class AlarmMode : public IMode
     }
 
     //0 when no option selected yet, 100 when quit
-    int selectOption(){
+    int selectOption() {
       char input = io->getValidDigitOrHash();
       if (input == '#') {
+        currentDisplayedOption = 0; //will make sure to start with displaying first option when alarmMode is entered again
         return 100;
       } else if (input && (int)input - 48 <= numberOfOptions) {
+        currentDisplayedOption = 0;
         return (int)input - 48;
       } else {
         return 0;
@@ -80,10 +84,10 @@ class AlarmMode : public IMode
 
     //executes selected option
     //blocking operation
-    void executeOption(int selectedOption){
-      switch(selectedOption){
+    void executeOption(int selectedOption) {
+      switch (selectedOption) {
         case 1: //display existing alarms
-          logger->logInfo("displayed alarms");
+          displayExistingAlarms();
           break;
         case 2: //create new alarm
           break;
@@ -102,10 +106,42 @@ class AlarmMode : public IMode
     //option 1
     void displayExistingAlarms()
     {
-      for (int i{}; i < currentAlarmQuantity; i++)
-      {
-        //log to LCD rather than Serial
-        Serial.print("Alarm 1 => Time: ..., Status: ..."); //status is "Enabled" or "Disabled"
+      const int displayAlarmsIntervalMS{3000};
+
+      //continue alarm display until # is entered (quit)
+      while (!io->enteredHash()) {
+        unsigned long currentAlarmMillis = millis();
+        if ((unsigned long)(currentAlarmMillis - previousAlarmMillis) >= displayAlarmsIntervalMS) {
+          io->clearScreen();
+          io->setCursor(0, 0);
+          io->print("Alarms (#=Quit):");
+
+          if (currentAlarmQuantity == 0) {
+            io->setCursor(0, 2);
+            io->print("0 alarms to display");
+          } else {
+            Alarm alarm = alarms[currentDisplayedAlarm];
+            io->setCursor(0, 1);
+            io->print("Alarm ");
+            io->print(currentDisplayedAlarm + 1); //first alarm has number 1 and is stored in alarms[0]
+            io->setCursor(0, 2);
+            io->print("Time: ");
+            io->printDigits(alarm.getHour(), true);
+            io->printDigits(alarm.getMinute());
+            io->setCursor(0, 3);
+            io->print("Status: ");
+            io->print(alarm.getStatus() ? "Enabled" : "Disabled");
+
+            currentDisplayedAlarm++;
+
+            //check if need to rollover to first option
+            if (currentDisplayedAlarm >= currentAlarmQuantity) {
+              currentDisplayedAlarm = 0;
+            }
+          }
+
+          previousAlarmMillis = currentAlarmMillis; //restart display option interval
+        }
       }
     }
 

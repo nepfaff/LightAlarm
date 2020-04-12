@@ -6,7 +6,7 @@
 class Alarm
 {
   private:
-    int id;
+    int id; //needed?
     int hour;
     int minute;
     bool enabled;
@@ -27,7 +27,7 @@ class Alarm
     {
       return minute;
     }
-    int getStatus() const
+    bool getStatus() const
     {
       return enabled;
     }

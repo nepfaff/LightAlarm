@@ -48,6 +48,18 @@ class UserIO
       screen->print(data);
     }
 
+    // utility function for digital time display: prints preceding colon and leading 0
+    void printDigits(int digits, bool isFirst = false) const
+    {
+      if (!isFirst) {
+        screen->print(":");
+      }
+      if (digits < 10) {
+        screen->print("0");
+      }
+      screen->print(digits);
+    }
+
     void setCursor(byte column, byte row) {
       screen->setCursor(column, row);
     }
