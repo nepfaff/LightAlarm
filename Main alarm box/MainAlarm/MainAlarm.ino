@@ -67,6 +67,23 @@ void loop()
   //display if an alarm is enabled
   //show by showing * in top right corner?
 
+  if (alarmMode.alarmTime()) {
+    io->clearScreen();
+    
+    while (!io->getKey()) {
+      io->setCursor(0, 0);
+      clockMode->digitalClockDisplay();
+      io->setCursor(0, 2);
+      io->print("Press any key");
+      io->setCursor(0, 3);
+      io->print("to disable the alarm");
+
+      //ring alarm or music (must be non-blocking as cannot escape this function otherwise)
+    }
+    currentMode = 0;
+    io->clearScreen();
+  }
+
 
   //change functionality based on current mode
   if (currentMode != 0) {
@@ -101,22 +118,22 @@ void loop()
 
     //act on user input (based on mode display)
     currentMode = io->getValidModeInt(modeNumber);
-    if(currentMode != 0){
+    if (currentMode != 0) {
       io->clearScreen();
     }
   } else if (currentMode == 1) { //alarm mode
     alarmMode->displayOptions();
-    int currentOption = alarmMode->selectOption(); 
+    int currentOption = alarmMode->selectOption();
 
     //0 when no option selected yet, 100 when quit
-    if(currentOption == 100){
+    if (currentOption == 100) {
       currentMode = 0;
-    }else if(currentOption){
-     alarmMode->executeOption(currentOption);
-     currentMode = 0;
+    } else if (currentOption) {
+      alarmMode->executeOption(currentOption);
+      currentMode = 0;
     }
-    
-    if(currentMode != 1){
+
+    if (currentMode != 1) {
       io->clearScreen();
     }
   } else if (currentMode == 2) { //timer mode
@@ -128,7 +145,7 @@ void loop()
 
     //set new time based on user input
     clockMode->changeTimeFromUserInput();
-    
+
     currentMode = 0;
     io->clearScreen();
   } else {
