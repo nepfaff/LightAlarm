@@ -16,12 +16,12 @@ class AlarmMode : public IMode
     const static int maxAlarmQuantity {
       3
     };
-    const static int numberOfConfigurationOptions{5};
+    const static int numberOfOptions{5};
     unsigned long previousAlarmMillis{};
     int currentDisplayedOption{};
 
     int currentAlarmQuantity{};
-    String optionNames[numberOfConfigurationOptions] {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
+    const String optionNames[numberOfOptions] {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
     Alarm alarms[maxAlarmQuantity] {};
 
     ILogger *logger;
@@ -50,7 +50,7 @@ class AlarmMode : public IMode
         io->clearScreen();
         io->setCursor(0, 0);
         io->print("Select one (#=Quit):");
-        for (int i{1}; i < 4 && currentDisplayedOption < numberOfConfigurationOptions; i++) {
+        for (int i{1}; i < 4 && currentDisplayedOption < numberOfOptions; i++) {
           String optionName = optionNames[currentDisplayedOption];
           io->setCursor(0, i);
           io->print(optionName);
@@ -58,7 +58,7 @@ class AlarmMode : public IMode
         }
 
         //check if need to rollover to first option
-        if (currentDisplayedOption > numberOfConfigurationOptions - 1) {
+        if (currentDisplayedOption > numberOfOptions - 1) {
           currentDisplayedOption = 0;
         }
 
@@ -66,20 +66,50 @@ class AlarmMode : public IMode
       }
     }
 
-    void enableExistingAlarm()
-    {
-      //get alarmNumber from keypad (use input validation e.g. checking that <= currentAlarmQuantity)
-      int alarmNumber{}; //alarmNumber corresponds to position in alarms array
-      alarms[alarmNumber].setStatus(true);
+    //0 when no option selected yet, 100 when quit
+    int selectOption(){
+      char input = io->getValidDigitOrHash();
+      if (input == '#') {
+        return 100;
+      } else if (input && (int)input - 48 <= numberOfOptions) {
+        return (int)input - 48;
+      } else {
+        return 0;
+      }
     }
 
-    void disableExistingAlarm()
-    {
-      //get alarmNumber from keypad (use input validation)
-      int alarmNumber{};
-      alarms[alarmNumber].setStatus(false);
+    //executes selected option
+    //blocking operation
+    void executeOption(int selectedOption){
+      switch(selectedOption){
+        case 1: //display existing alarms
+          logger->logInfo("displayed alarms");
+          break;
+        case 2: //create new alarm
+          break;
+        case 3: //delete existing alarm
+          break;
+        case 4: //enable existing alarm
+          break;
+        case 5: //disable existing alarm
+          break;
+        default:
+          logger->logError("Tried to execute non-existing alarm option", "AlarmMode, executeOption");
+          break;
+      }
     }
 
+    //option 1
+    void displayExistingAlarms()
+    {
+      for (int i{}; i < currentAlarmQuantity; i++)
+      {
+        //log to LCD rather than Serial
+        Serial.print("Alarm 1 => Time: ..., Status: ..."); //status is "Enabled" or "Disabled"
+      }
+    }
+
+    //option 2
     bool createNewAlarm()
     {
       //some basic input validation here
@@ -100,9 +130,9 @@ class AlarmMode : public IMode
       alarms[currentAlarmQuantity] = newAlarm;
       currentAlarmQuantity++;
       return true;
-
     }
 
+    //option 3
     bool deleteExistingAlarm()
     {
       //get alarm number from input (represents an index)
@@ -130,13 +160,20 @@ class AlarmMode : public IMode
       return true;
     }
 
-    void displayExistingAlarms()
+    //option 4
+    void enableExistingAlarm()
     {
-      for (int i{}; i < currentAlarmQuantity; i++)
-      {
-        //log to LCD rather than Serial
-        Serial.print("Alarm 1 => Time: ..., Status: ..."); //status is "Enabled" or "Disabled"
-      }
+      //get alarmNumber from keypad (use input validation e.g. checking that <= currentAlarmQuantity)
+      int alarmNumber{}; //alarmNumber corresponds to position in alarms array
+      alarms[alarmNumber].setStatus(true);
+    }
+
+    //option 5
+    void disableExistingAlarm()
+    {
+      //get alarmNumber from keypad (use input validation)
+      int alarmNumber{};
+      alarms[alarmNumber].setStatus(false);
     }
 
     //checks whether to ring sound system now (comparisson with current time)

@@ -31,7 +31,7 @@ class ClockMode : public IMode
 
     bool askForTimeDigit(String &timeContainer, int maxDigit) {
       char input = io->getValidDigitOrHashBlocking();
-      if (input && input == '#') {
+      if (input == '#') {
         return 0;
       } else if (input && (int)input - 48 <= maxDigit) {
         io->print(input);

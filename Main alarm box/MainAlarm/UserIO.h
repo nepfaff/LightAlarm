@@ -83,6 +83,16 @@ class UserIO
       return false;
     }
 
+    char getValidDigitOrHash(){
+      char key = keyIn->getKey();
+      if(isdigit(key) || key == '#'){
+        return key;
+      }else if(key){
+        logger->logInfo("Key not a valid input");
+      }
+       return 0;
+    }
+
     char getValidDigitOrHashBlocking(){
       char key = keyIn->waitForKey();
       if(isdigit(key) || key == '#'){

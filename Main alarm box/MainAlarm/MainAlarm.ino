@@ -106,10 +106,19 @@ void loop()
     }
   } else if (currentMode == 1) { //alarm mode
     alarmMode->displayOptions();
-    //alarmMode->selectOption();
+    int currentOption = alarmMode->selectOption(); 
+
+    //0 when no option selected yet, 100 when quit
+    if(currentOption == 100){
+      currentMode = 0;
+    }else if(currentOption){
+     alarmMode->executeOption(currentOption);
+     currentMode = 0;
+    }
     
-    //io->clearScreen();
-    //currentMode = 0;
+    if(currentMode != 1){
+      io->clearScreen();
+    }
   } else if (currentMode == 2) { //timer mode
     currentMode = 0;
   } else if (currentMode == 3) { //clock mode
