@@ -90,6 +90,7 @@ class AlarmMode : public IMode
           displayExistingAlarms();
           break;
         case 2: //create new alarm
+          createNewAlarm();
           break;
         case 3: //delete existing alarm
           break;
@@ -146,26 +147,35 @@ class AlarmMode : public IMode
     }
 
     //option 2
-    bool createNewAlarm()
+    void createNewAlarm()
     {
-      //some basic input validation here
+      io->clearScreen();
+
       if (currentAlarmQuantity >= maxAlarmQuantity)
       {
-        logger->logError("Cannot exceed maximum alarm quantity", "AlarmMode, createNewAlarm");
-        //write some error to LCD
-        return false;
+        while (!io->enteredHash()) {
+          io->setCursor(0, 0);
+          io->print("Max alarm quantity");
+          io->setCursor(0, 1);
+          io->print("reached");
+          io->setCursor(0, 3);
+          io->print("Enter # to quit");
+        }
+      } else {
+        io->setCursor(0, 0);
+        io->print("Entering alarm time");
+        int* alarmTime = io->getTime();
+        if (!alarmTime) {
+          return;
+        }
+
+        int hour{alarmTime[0]}, minute{alarmTime[1]};
+        delete[] alarmTime;
+
+        Alarm newAlarm(hour, minute, true);
+        alarms[currentAlarmQuantity] = newAlarm;
+        currentAlarmQuantity++;
       }
-
-      //ask user for alarm time and get data (LCD screen and keypad)
-      //include error checking (use of letters, exceeding range for hour 0-23, range for minute 0-59)
-      //probably best to check directly from keyboard e.g. first hour digit must be 0, 1 or 2 (all other inputs are illegal and result in user having to retsart entering time)
-      int hour = 00;
-      int minute = 00;
-
-      Alarm newAlarm(hour, minute, true);
-      alarms[currentAlarmQuantity] = newAlarm;
-      currentAlarmQuantity++;
-      return true;
     }
 
     //option 3

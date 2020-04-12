@@ -17,76 +17,6 @@ class ClockMode : public IMode
     ILogger *logger;
     UserIO *io;
 
-    bool askForTimeDigit(String &timeContainer, int maxDigit) {
-      char input = io->getValidDigitOrHashBlocking();
-      if (input == '#') {
-        return 0;
-      } else if (input && (int)input - 48 <= maxDigit) {
-        io->print(input);
-        timeContainer += input;
-        return 1;
-      } else {
-        //restart user input
-        return getNewTime();
-      }
-    }
-
-    //deals with user input and validation
-    int* getNewTime()
-    {
-      String hour{}, minute{};
-      
-      //remove mess that was potentially left behind by invalid input
-      io->setCursor(0, 2);
-      io->print("                    ");
-      io->showCursor();
-
-      //get hour
-      io->setCursor(0, 1);
-      io->print("Enter hour (#=Quit):");
-      io->setCursor(0, 2);
-      io->print("Hour: ");
-
-      //get MSB hour digit
-      if (!askForTimeDigit(hour, 2)) {
-        return 0;
-      }
-      //get LSB hour digit
-      if (hour == "1") {
-        if (!askForTimeDigit(hour, 9)) {
-          return 0;
-        }
-      } else {
-        if (!askForTimeDigit(hour, 3)) {
-          return 0;
-        }
-      }
-
-      //get minute
-      io->setCursor(0, 1);
-      io->print("                    ");
-      io->setCursor(0, 1);
-      io->print("Enter min (#=Quit):");
-      io->setCursor(0, 2);
-      io->print("Minute: ");
-
-      //get MSB minute digit
-      if (!askForTimeDigit(minute, 5)) {
-        return 0;
-      }
-      //get LSB minute digit
-      if (!askForTimeDigit(minute, 9)) {
-        return 0;
-      }
-
-      io->hideCursor();
-
-      int* time = new int[2];
-      time[0] = hour.toInt();
-      time[1] = minute.toInt();
-      return time;
-    }
-
   public:
     ClockMode(ILogger *_logger, UserIO *_io)
       : logger{_logger}, io(_io), IMode("Clock mode") {}
@@ -99,7 +29,7 @@ class ClockMode : public IMode
     //asks user to input new hour and minute before setting time to user input
     void changeTimeFromUserInput()
     {
-      int* newTime = getNewTime();
+      int* newTime = io->getTime();
       if (!newTime) {
         return;
       }

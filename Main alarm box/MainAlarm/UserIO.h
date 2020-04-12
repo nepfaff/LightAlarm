@@ -18,6 +18,21 @@ class UserIO
     LiquidCrystal_I2C *screen;
     Keypad *keyIn;
 
+    //helper function for getTime
+    bool getTimeDigit(String &timeContainer, int maxDigit) {
+      char input = getValidDigitOrHashBlocking();
+      if (input == '#') {
+        return 0;
+      } else if (input && (int)input - 48 <= maxDigit) {
+        print(input);
+        timeContainer += input;
+        return 1;
+      } else {
+        //restart user input
+        return getTime();
+      }
+    }
+
   public:
     UserIO(ILogger *_logger, Keypad *_keypad)
       : logger{_logger}, keyIn{_keypad} {
@@ -48,7 +63,7 @@ class UserIO
       screen->print(data);
     }
 
-    // utility function for digital time display: prints preceding colon and leading 0
+    //utility function for digital time display: prints preceding colon and leading 0
     void printDigits(int digits, bool isFirst = false) const
     {
       if (!isFirst) {
@@ -127,6 +142,62 @@ class UserIO
       logger->logInfo("Entered key doesn't correspond to a mode");
       logger->logInfo("Back at default mode");
       return 0; //0 indicates default mode
+    }
+
+    //returns [hour, minute] or 0 if quit
+    int* getTime()
+    {
+      String hour{}, minute{};
+      
+      //remove mess that was potentially left behind by invalid input
+      setCursor(0, 2);
+      print("                    ");
+      showCursor();
+
+      //get hour
+      setCursor(0, 1);
+      print("Enter hour (#=Quit):");
+      setCursor(0, 2);
+      print("Hour: ");
+
+      //get MSB hour digit
+      if (!getTimeDigit(hour, 2)) {
+        return 0;
+      }
+      //get LSB hour digit
+      if (hour == "1") {
+        if (!getTimeDigit(hour, 9)) {
+          return 0;
+        }
+      } else {
+        if (!getTimeDigit(hour, 3)) {
+          return 0;
+        }
+      }
+
+      //get minute
+      setCursor(0, 1);
+      print("                    ");
+      setCursor(0, 1);
+      print("Enter min (#=Quit):");
+      setCursor(0, 2);
+      print("Minute: ");
+
+      //get MSB minute digit
+      if (!getTimeDigit(minute, 5)) {
+        return 0;
+      }
+      //get LSB minute digit
+      if (!getTimeDigit(minute, 9)) {
+        return 0;
+      }
+
+      hideCursor();
+
+      int* time = new int[2];
+      time[0] = hour.toInt();
+      time[1] = minute.toInt();
+      return time;
     }
 };
 
