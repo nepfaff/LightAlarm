@@ -72,7 +72,7 @@ class AlarmMode : public IMode
     int selectOption() {
       char input = io->getValidDigitOrHash();
       if (input == '#') {
-        currentDisplayedOption = 0; //will make sure to start with displaying first option when alarmMode is entered again
+        currentDisplayedOption = 0; //make sure to start with displaying first option when alarmMode is entered again
         return 100;
       } else if (input && (int)input - 48 <= numberOfOptions) {
         currentDisplayedOption = 0;
@@ -93,6 +93,7 @@ class AlarmMode : public IMode
           createNewAlarm();
           break;
         case 3: //delete existing alarm
+          deleteExistingAlarm();
           break;
         case 4: //enable existing alarm
           break;
@@ -144,6 +145,7 @@ class AlarmMode : public IMode
           previousAlarmMillis = currentAlarmMillis; //restart display option interval
         }
       }
+      currentDisplayedAlarm = 0; //make sure to start with displaying first alarm when displayExistingAlarms is entered again
     }
 
     //option 2
@@ -179,31 +181,61 @@ class AlarmMode : public IMode
     }
 
     //option 3
-    bool deleteExistingAlarm()
+    void deleteExistingAlarm()
     {
-      //get alarm number from input (represents an index)
-      int alarmNumber{};
-      if (alarmNumber > currentAlarmQuantity - 1) {
-        logger->logError("Trying to delete an alarm based on a not existing alarmNumber", "AlarmMode, deleteExistingAlarm");
-        return false;
-      }
+      io->clearScreen();
 
-      if (alarmNumber == currentAlarmQuantity - 1) {
-        //remove last element from array
-        alarms[alarmNumber] = {};
+      if (currentAlarmQuantity == 0)
+      {
+        while (!io->enteredHash()) {
+          io->setCursor(0, 0);
+          io->print("No alarm to display");
+          io->setCursor(0, 2);
+          io->print("Enter # to quit");
+        }
       } else {
-        //removing element from middle of array and hence need to make sure that existing alarms fill first spaces of array and not existing alarms are at end of array
-        Alarm remainingAlarms[maxAlarmQuantity] {};
-        int j{};
-        for (int i{}; i < maxAlarmQuantity; i++) {
-          if (i != alarmNumber) {
-            remainingAlarms[j] = alarms[i];
-            j++;
+        int alarmNumber{}; //alarm index in alarms[] will be alarmNumber - 1
+
+        io->setCursor(0, 3);
+        io->print("Enter # to quit");
+        io->setCursor(0, 0);
+        io->print("Enter number of");
+        io->setCursor(0, 1);
+        io->print("alarm to delete: ");
+        io->showCursor();
+        char input = io->getValidDigitOrHashBlocking();
+
+        if (input == '#') {
+          return;
+        } else if (input && (int)input - 48 <= currentAlarmQuantity) {
+          io->print(input);
+          io->hideCursor();
+          delay(500); //for user to see their input
+
+          int alarmIdx{(int)input - 49}; //alarm index in alarms[] (alarm number - 1)
+
+          if (alarmNumber == currentAlarmQuantity - 1) {
+            //remove last element from array
+            alarms[alarmIdx] = {};
+          } else {
+            //removing element from middle of array and hence need to make sure that existing alarms fill first spaces of array and not existing alarms are at end of array
+            Alarm remainingAlarms[maxAlarmQuantity] {};
+            int j{};
+            for (int i{}; i < maxAlarmQuantity; i++) {
+              if (i != alarmIdx) {
+                remainingAlarms[j] = alarms[i];
+                j++;
+              }
+            }
+            memcpy(alarms, remainingAlarms, sizeof alarms);
           }
+          currentAlarmQuantity--;
+
+        } else {
+          //restart user input
+          deleteExistingAlarm();
         }
       }
-      currentAlarmQuantity--;
-      return true;
     }
 
     //option 4
@@ -224,7 +256,7 @@ class AlarmMode : public IMode
 
     //checks whether to ring sound system now (comparisson with current time)
     //when true, need to ring sound system and disable alarm
-    bool checkIfAlarmTime(const Alarm &alarm, const ClockMode *clock)
+    bool checkIfAlarmTime(const Alarm & alarm, const ClockMode * clock)
     {
       if (alarm.getHour() == clock->getHour() && alarm.getMinute() <= clock->getMinute())
       { //check if alarm time is now or has just passed
