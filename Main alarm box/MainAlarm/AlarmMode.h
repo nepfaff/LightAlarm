@@ -96,8 +96,10 @@ class AlarmMode : public IMode
           deleteExistingAlarm();
           break;
         case 4: //enable existing alarm
+          changeExistingAlarmStatus(true);
           break;
         case 5: //disable existing alarm
+          changeExistingAlarmStatus(false);
           break;
         default:
           logger->logError("Tried to execute non-existing alarm option", "AlarmMode, executeOption");
@@ -238,27 +240,61 @@ class AlarmMode : public IMode
       }
     }
 
-    //option 4
-    void enableExistingAlarm()
+    //option 4 and 5 (true to enable, false to disable)
+    void changeExistingAlarmStatus(bool newStatus)
     {
-      //get alarmNumber from keypad (use input validation e.g. checking that <= currentAlarmQuantity)
-      int alarmNumber{}; //alarmNumber corresponds to position in alarms array
-      alarms[alarmNumber].setStatus(true);
-    }
+      io->clearScreen();
 
-    //option 5
-    void disableExistingAlarm()
-    {
-      //get alarmNumber from keypad (use input validation)
-      int alarmNumber{};
-      alarms[alarmNumber].setStatus(false);
+      if (currentAlarmQuantity == 0)
+      {
+        while (!io->enteredHash()) {
+          io->setCursor(0, 0);
+          if (newStatus) {
+            io->print("No alarm to enable");
+          } else {
+            io->print("No alarm to disable");
+          }
+          io->setCursor(0, 2);
+          io->print("Enter # to quit");
+        }
+      } else {
+        int alarmNumber{}; //alarm index in alarms[] will be alarmNumber - 1
+
+        io->setCursor(0, 3);
+        io->print("Enter # to quit");
+        io->setCursor(0, 0);
+        io->print("Enter number of");
+        io->setCursor(0, 1);
+        if (newStatus) {
+          io->print("alarm to enable: ");
+        } else {
+          io->print("alarm to disable: ");
+        }
+        io->showCursor();
+        char input = io->getValidDigitOrHashBlocking();
+
+        if (input == '#') {
+          return;
+        } else if (input && (int)input - 48 <= currentAlarmQuantity) {
+          io->print(input);
+          io->hideCursor();
+          delay(500); //for user to see their input
+
+          int alarmIdx{(int)input - 49}; //alarm index in alarms[] (alarm number - 1)
+          alarms[alarmIdx].setStatus(newStatus);
+        } else {
+          //restart user input
+          deleteExistingAlarm();
+        }
+      }
     }
 
     //checks whether to ring sound system now (comparisson with current time)
     //when true, need to ring sound system and disable alarm
+    //  !!!Probably better to make no args function and iterate through entire alarms[] to check if time for any to ring => but this function in MainAlarm loop(), before switch/if else statement
     bool checkIfAlarmTime(const Alarm & alarm, const ClockMode * clock)
     {
-      if (alarm.getHour() == clock->getHour() && alarm.getMinute() <= clock->getMinute())
+      if (alarm.getStatus() && alarm.getHour() == clock->getHour() && alarm.getMinute() <= clock->getMinute())
       { //check if alarm time is now or has just passed
         return true;
       }

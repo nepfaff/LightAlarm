@@ -165,7 +165,7 @@ class UserIO
         return 0;
       }
       //get LSB hour digit
-      if (hour == "1") {
+      if (hour == "0" || hour == "1") {
         if (!getTimeDigit(hour, 9)) {
           return 0;
         }
