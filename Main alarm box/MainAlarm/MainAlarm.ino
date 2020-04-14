@@ -4,6 +4,7 @@
 #include "ClockMode.h"
 #include "AlarmMode.h"
 #include "TimerMode.h"
+#include "SoundSystem.h"
 
 //keypad setup (needs to be prior to Setup, hence cannot do it inside UserIO constructor)
 const byte rows = 4;
@@ -23,6 +24,9 @@ SerialLogger *logger;
 
 //user IO
 UserIO *io;
+
+//sound system
+SoundSystem *soundSystem;
 
 //setup different modes
 ClockMode *clockMode;
@@ -50,6 +54,7 @@ void setup()
   //initialize pointers (need to do this after Serial.begin(9600) for it to work)
   logger = new SerialLogger();
   io = new UserIO(logger, keyIn);
+  soundSystem = new SoundSystem(logger);
   clockMode = new ClockMode(logger, io);
   alarmMode = new AlarmMode(logger, io, clockMode);
   timerMode = new TimerMode(logger, io);
@@ -79,16 +84,19 @@ void loop()
       io->setCursor(0, 3);
       io->print("to disable the alarm");
 
-      //ring alarm or music (must be non-blocking as cannot escape this function otherwise)
+      soundSystem->startRingingBuzzerAlarm();
     }
 
-    //disable alarm
+    soundSystem->stopRingingBuzzerAlarm();
     alarmMode->changeExistingAlarmStatusOnId(activeAlarmId, false);
     
     currentMode = 0;
     io->clearScreen();
   }
 
+  if(alarmMode->activateLight()){
+    
+  }
 
   //change functionality based on current mode
   if (currentMode != 0) {

@@ -290,6 +290,14 @@ class AlarmMode : public IMode
       }
     }
 
+    void changeExistingAlarmStatusOnId(int id, bool newStatus){
+      for(int i{}; i<currentAlarmQuantity; i++){
+        if(alarms[i].getId() == id){
+          alarms[i].setStatus(newStatus);
+        }
+      }
+    }
+
     //checks whether it is time for an alarm to ring by comparing alarm time with current time
     //returns id of active alarm or 0 if no active alarm
     int getActiveAlarmId() const {
@@ -302,13 +310,7 @@ class AlarmMode : public IMode
       return 0;
     }
 
-    void changeExistingAlarmStatusOnId(int id, bool newStatus){
-      for(int i{}; i<currentAlarmQuantity; i++){
-        if(alarms[i].getId() == id){
-          alarms[i].setStatus(newStatus);
-        }
-      }
-    }
+      
 };
 
 #endif
