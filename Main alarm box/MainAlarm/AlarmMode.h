@@ -16,6 +16,7 @@ class AlarmMode : public IMode
     const static int maxAlarmQuantity {
       3
     };
+    
     int currentAlarmQuantity{};
     int currentDisplayedAlarm{};
     Alarm alarms[maxAlarmQuantity] {}; //position 0 in array holds alarm with number 1
@@ -289,18 +290,23 @@ class AlarmMode : public IMode
       }
     }
 
-    //checks whether to ring sound system now (comparisson with current time)
-    //when true, need to ring sound system and disable alarm
-    //  !!!Probably better to make no args function and iterate through entire alarms[] to check if time for any to ring => but this function in MainAlarm loop(), before switch/if else statement
-    bool checkIfAlarmTime(const Alarm & alarm, const ClockMode * clock)
-    {
-      if (alarm.getStatus() && alarm.getHour() == clock->getHour() && alarm.getMinute() <= clock->getMinute())
-      { //check if alarm time is now or has just passed
-        return true;
+    //checks whether it is time for an alarm to ring by comparing alarm time with current time
+    //returns id of active alarm or 0 if no active alarm
+    int getActiveAlarmId() const {
+      for (int i{}; i < currentAlarmQuantity; i++) {
+        if (alarms[i].getStatus() && alarms[i].getHour() == clock->getHour() && alarms[i].getMinute() == clock->getMinute())
+        {
+          return alarms[i].getId();
+        }
       }
-      else
-      {
-        return false;
+      return 0;
+    }
+
+    void changeExistingAlarmStatusOnId(int id, bool newStatus){
+      for(int i{}; i<currentAlarmQuantity; i++){
+        if(alarms[i].getId() == id){
+          alarms[i].setStatus(newStatus);
+        }
       }
     }
 };

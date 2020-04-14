@@ -66,8 +66,9 @@ void loop()
 {
   //display if an alarm is enabled
   //show by showing * in top right corner?
-
-  if (alarmMode.alarmTime()) {
+  
+  int activeAlarmId = alarmMode->getActiveAlarmId();
+  if (activeAlarmId) {
     io->clearScreen();
     
     while (!io->getKey()) {
@@ -80,6 +81,10 @@ void loop()
 
       //ring alarm or music (must be non-blocking as cannot escape this function otherwise)
     }
+
+    //disable alarm
+    alarmMode->changeExistingAlarmStatusOnId(activeAlarmId, false);
+    
     currentMode = 0;
     io->clearScreen();
   }
