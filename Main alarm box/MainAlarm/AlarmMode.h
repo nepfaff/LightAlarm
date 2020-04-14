@@ -45,6 +45,10 @@ class AlarmMode : public IMode
       currentAlarmQuantity = 0;
     }
 
+    int getTimeToActivateLightMin() const{
+      return timeToActivateLightMin;
+    }
+
     void displayOptions() {
       const int displayOptionsIntervalMS{3000};
 

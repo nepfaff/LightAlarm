@@ -100,7 +100,7 @@ void loop()
 
   //happens prior to an alarm becoming active
   if(alarmMode->activateLight()){
-    Serial.println("Alarm active soon");
+    commSystem->enableLightBasedOnTimeTillAlarm(alarmMode->getTimeToActivateLightMin());
   }
 
   //change functionality based on current mode
