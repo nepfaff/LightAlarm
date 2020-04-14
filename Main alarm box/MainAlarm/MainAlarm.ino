@@ -5,6 +5,7 @@
 #include "AlarmMode.h"
 #include "TimerMode.h"
 #include "SoundSystem.h"
+#include "CommSystem.h"
 
 //keypad setup (needs to be prior to Setup, hence cannot do it inside UserIO constructor)
 const byte rows = 4;
@@ -25,8 +26,9 @@ SerialLogger *logger;
 //user IO
 UserIO *io;
 
-//sound system
+//sound and communication system
 SoundSystem *soundSystem;
+CommSystem *commSystem;
 
 //setup different modes
 ClockMode *clockMode;
@@ -55,6 +57,7 @@ void setup()
   logger = new SerialLogger();
   io = new UserIO(logger, keyIn);
   soundSystem = new SoundSystem(logger);
+  commSystem = new CommSystem(logger);
   clockMode = new ClockMode(logger, io);
   alarmMode = new AlarmMode(logger, io, clockMode);
   timerMode = new TimerMode(logger, io);
@@ -71,7 +74,8 @@ void loop()
 {
   //display if an alarm is enabled
   //show by showing * in top right corner?
-  
+
+  //logic for what happens if an alarm is active
   int activeAlarmId = alarmMode->getActiveAlarmId();
   if (activeAlarmId) {
     io->clearScreen();
@@ -94,8 +98,9 @@ void loop()
     io->clearScreen();
   }
 
+  //happens prior to an alarm becoming active
   if(alarmMode->activateLight()){
-    
+    Serial.println("Alarm active soon");
   }
 
   //change functionality based on current mode

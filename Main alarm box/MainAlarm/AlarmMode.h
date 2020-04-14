@@ -16,7 +16,8 @@ class AlarmMode : public IMode
     const static int maxAlarmQuantity {
       3
     };
-    
+    const static int timeToActivateLightMin{1};
+
     int currentAlarmQuantity{};
     int currentDisplayedAlarm{};
     Alarm alarms[maxAlarmQuantity] {}; //position 0 in array holds alarm with number 1
@@ -290,9 +291,9 @@ class AlarmMode : public IMode
       }
     }
 
-    void changeExistingAlarmStatusOnId(int id, bool newStatus){
-      for(int i{}; i<currentAlarmQuantity; i++){
-        if(alarms[i].getId() == id){
+    void changeExistingAlarmStatusOnId(int id, bool newStatus) {
+      for (int i{}; i < currentAlarmQuantity; i++) {
+        if (alarms[i].getId() == id) {
           alarms[i].setStatus(newStatus);
         }
       }
@@ -310,7 +311,19 @@ class AlarmMode : public IMode
       return 0;
     }
 
-      
+    //start activating light set time before alarm starts
+    bool activateLight() {
+      for (int i{}; i < currentAlarmQuantity; i++) {
+        if (alarms[i].getStatus() && alarms[i].getMinute() >= timeToActivateLightMin && alarms[i].getHour() == clock->getHour() && alarms[i].getMinute() - timeToActivateLightMin == clock->getMinute()) {
+          return true;
+        }
+        else if (alarms[i].getStatus() && (alarms[i].getHour() - 1) == clock->getHour() && (alarms[i].getMinute() + 60 - timeToActivateLightMin) == clock->getMinute())
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 };
 
 #endif
