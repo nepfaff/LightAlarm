@@ -17,15 +17,17 @@ void loop() {
 
     switch (instruction) {
       case 'T': //enable light based on time argument from data
-        Serial.println("Starting to active light using PWM");
+        Serial.println(F("Starting to active light using PWM"));
         //add code here e.g. timer to increase duty cycle based on fraction of total time left
         //once received, want to wait one minute before acccepting other similar instruction (exception is instruction 'D' for disable) => will receive same instruction for whole minute due to sending and compare functionality 
         break;
       case 'D': //disable any current light or light timer
         //e.g. when user disables alarm after light command has already been send => need to disable any light
         break;
+       case 'O': //enable light
+       break;
       default:
-        Serial.print("Unknown instruction: ");
+        Serial.print(F("Unknown instruction: "));
         Serial.println(instruction);
         break;
     }
