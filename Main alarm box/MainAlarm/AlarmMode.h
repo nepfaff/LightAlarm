@@ -14,14 +14,14 @@ class AlarmMode : public IMode
     const static byte maxAlarmQuantity PROGMEM = 3;
     const static byte timeToActivateLightMin PROGMEM = 1;
 
-    int currentAlarmQuantity;
-    int currentDisplayedAlarm;
+    int currentAlarmQuantity{};
+    int currentDisplayedAlarm{};
     Alarm alarms[maxAlarmQuantity] {}; //position 0 in array holds alarm with number 1
 
     unsigned long previousAlarmMillis;
 
-    const static byte numberOfOptions PROGMEM = 5;
-    const String optionNames[numberOfOptions] PROGMEM = {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
+    const static byte numberOfOptions PROGMEM = 6;
+    const String optionNames[numberOfOptions] PROGMEM = {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm", "6. Delete all alarms"};
     byte currentDisplayedOption{};
 
     ILogger *logger;
@@ -102,6 +102,9 @@ class AlarmMode : public IMode
           break;
         case 5: //disable existing alarm
           changeExistingAlarmStatus(false);
+          break;
+        case 6: //delete all existing alarms
+          deleteAllExistingAlarms();
           break;
         default:
           logger->logError("Tried to execute non-existing alarm option", "AlarmMode, executeOption");
@@ -231,7 +234,7 @@ class AlarmMode : public IMode
                 j++;
               }
             }
-            memcpy(alarms, remainingAlarms, sizeof alarms);
+            memcpy(alarms, remainingAlarms, sizeof(alarms));
           }
           currentAlarmQuantity--;
 
@@ -289,6 +292,20 @@ class AlarmMode : public IMode
           deleteExistingAlarm();
         }
       }
+    }
+
+    //option 6
+    void deleteAllExistingAlarms(){
+      io->clearScreen();
+      
+      memset(alarms, 0, sizeof(alarms));
+      currentAlarmQuantity = 0;
+      
+      io->setCursor(0, 1);
+      io->print(F("Deleted all"));
+      io->setCursor(0, 2);
+      io->print(F("existing alarms"));
+      delay(1300);
     }
 
     void changeExistingAlarmStatusOnId(int id, bool newStatus) {

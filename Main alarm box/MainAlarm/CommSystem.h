@@ -10,7 +10,7 @@
 SoftwareSerial *BTSerial;
 
 const unsigned long enableLightIntervalMS PROGMEM = 60000;
-unsigned long previousLightEnableMS;
+unsigned long previousLightEnableMS{};
 
 /*
    responsible for communication with other microcontrollers
