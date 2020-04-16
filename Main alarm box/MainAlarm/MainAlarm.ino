@@ -8,16 +8,16 @@
 #include "CommSystem.h"
 
 //keypad setup (needs to be prior to Setup, hence cannot do it inside UserIO constructor)
-const byte rows = 4;
-const byte cols = 4;
+const byte rows PROGMEM = 4;
+const byte cols PROGMEM = 4;
 const char keys[rows][cols] = {
   {'1', '2', '3', 'A'},
   {'4', '5', '6', 'B'},
   {'7', '8', '9', 'C'},
   {'*', '0', '#', 'D'}
 };
-const byte rowPins[rows] {49, 48, 47, 46};
-const byte colPins[cols] {53, 52, 51, 50};
+const byte rowPins[rows] = {49, 48, 47, 46};
+const byte colPins[cols] = {53, 52, 51, 50};
 Keypad *keyIn = new Keypad(makeKeymap(keys), rowPins, colPins, rows, cols);
 
 //logging service
@@ -36,18 +36,16 @@ AlarmMode *alarmMode;
 TimerMode *timerMode;
 
 //mode container for polymorthism
-const byte modeNumber {
-  4
-}; //default mode also counts as mode (see switch statement)
+const byte modeNumber PROGMEM = 4; //default mode also counts as mode (see switch statement)
 IMode* modes[modeNumber];
 
 //current mode
 int currentMode{0};
 
 //default display of modes on screen (mode 0)
-int displayModeIntervalMS{1500}; //determines time between displaying different mode options on screen
+const int displayModeIntervalMS PROGMEM = 1500; //determines time between displaying different mode options on screen
 unsigned long previousMillis{};
-int currentDisplayedMode{1}; //don't display default mode 0
+int currentDisplayedMode = 1; //don't display default mode 0
 
 void setup()
 {
@@ -79,27 +77,27 @@ void loop()
   int activeAlarmId = alarmMode->getActiveAlarmId();
   if (activeAlarmId) {
     io->clearScreen();
-    
+
     while (!io->getKey()) {
       io->setCursor(0, 0);
       clockMode->digitalClockDisplay();
       io->setCursor(0, 2);
-      io->print("Press any key");
+      io->print(F("Press any key"));
       io->setCursor(0, 3);
-      io->print("to disable the alarm");
+      io->print(F("to disable the alarm"));
 
       soundSystem->startRingingBuzzerAlarm();
     }
 
     soundSystem->stopRingingBuzzerAlarm();
     alarmMode->changeExistingAlarmStatusOnId(activeAlarmId, false);
-    
+
     currentMode = 0;
     io->clearScreen();
   }
 
   //happens prior to an alarm becoming active
-  if(alarmMode->activateLight()){
+  if (alarmMode->activateLight()) {
     commSystem->enableLightBasedOnTimeTillAlarm(alarmMode->getTimeToActivateLightMin());
   }
 
@@ -117,11 +115,11 @@ void loop()
     unsigned long currentMillis = millis();
     if ((unsigned long)(currentMillis - previousMillis) >= displayModeIntervalMS) {
       io->setCursor(0, 2);
-      io->print("Select one:");
+      io->print(F("Select one:"));
       String name = modes[currentDisplayedMode]->getModeName();
       io->setCursor(0, 3);
       io->print(currentDisplayedMode);
-      io->print(". ");
+      io->print(F(". "));
       io->print(name);
 
       //decide which mode will be displayed next
@@ -167,8 +165,8 @@ void loop()
     currentMode = 0;
     io->clearScreen();
   } else {
-    logger->logError("Tried to access non existing mode", "MainAlarm, switch statement");
+    logger->logError(F("Tried to access non existing mode"), F("MainAlarm, switch statement"));
     currentMode = 0;
-    logger->logInfo("Switched mode to default mode 0");
+    logger->logInfo(F("Switched mode to default mode 0"));
   }
 }

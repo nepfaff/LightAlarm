@@ -115,7 +115,7 @@ class UserIO
       if(isdigit(key) || key == '#'){
         return key;
       }else if(key){
-        logger->logInfo("Key not a valid input");
+        logger->logInfo(F("Key not a valid input"));
       }
        return 0;
     }
@@ -125,7 +125,7 @@ class UserIO
       if(isdigit(key) || key == '#'){
         return key;
       }
-       logger->logInfo("Key not a valid input");
+       logger->logInfo(F("Key not a valid input"));
        return 0;
     }
 
@@ -139,8 +139,8 @@ class UserIO
           return num;
         }
       }
-      logger->logInfo("Entered key doesn't correspond to a mode");
-      logger->logInfo("Back at default mode");
+      logger->logInfo(F("Entered key doesn't correspond to a mode"));
+      logger->logInfo(F("Back at default mode"));
       return 0; //0 indicates default mode
     }
 
@@ -156,9 +156,9 @@ class UserIO
 
       //get hour
       setCursor(0, 1);
-      print("Enter hour (#=Quit):");
+      print(F("Enter hour (#=Quit):"));
       setCursor(0, 2);
-      print("Hour: ");
+      print(F("Hour: "));
 
       //get MSB hour digit
       if (!getTimeDigit(hour, 2)) {
@@ -179,9 +179,9 @@ class UserIO
       setCursor(0, 1);
       print("                    ");
       setCursor(0, 1);
-      print("Enter min (#=Quit):");
+      print(F("Enter min (#=Quit):"));
       setCursor(0, 2);
-      print("Minute: ");
+      print(F("Minute: "));
 
       //get MSB minute digit
       if (!getTimeDigit(minute, 5)) {

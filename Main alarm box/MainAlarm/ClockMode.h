@@ -50,7 +50,7 @@ class ClockMode : public IMode
     void digitalClockDisplay() const
     {
       io->setCursor(0, 0);
-      io->print("Current time: ");
+      io->print(F("Current time: "));
       io->printDigits(hour(), true);
       io->printDigits(minute());
       io->print(" ");

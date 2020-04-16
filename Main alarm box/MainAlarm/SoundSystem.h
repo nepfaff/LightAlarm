@@ -5,11 +5,11 @@
 
 #include "ILogger.h"
 
-const int activeBuzzerPin {
-  2
-};
+const int activeBuzzerPin PROGMEM = 2;
 
-//rings buzzers, plays sd audio files, etc.
+/*
+   rings buzzers, plays sd audio files, etc.
+*/
 class SoundSystem
 {
   private:
@@ -18,18 +18,18 @@ class SoundSystem
   public:
     SoundSystem(ILogger *_logger)
       : logger{_logger} {
-        pinMode(activeBuzzerPin, OUTPUT);
-        }
+      pinMode(activeBuzzerPin, OUTPUT);
+    }
 
     void startRingingBuzzerAlarm()
     {
-      logger->logInfo("Starting to ring buzzer alarm");
+      logger->logInfo(F("Starting to ring buzzer alarm"));
       digitalWrite(activeBuzzerPin, HIGH);
     }
 
     void stopRingingBuzzerAlarm()
     {
-      logger->logInfo("Stopping to ring buzzer alarm");
+      logger->logInfo(F("Stopping to ring buzzer alarm"));
       digitalWrite(activeBuzzerPin, LOW);
     }
 };

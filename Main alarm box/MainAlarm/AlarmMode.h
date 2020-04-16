@@ -8,15 +8,11 @@
 #include "ILogger.h"
 #include "UserIO.h"
 
-//use current time (fuctions take ClockMode object as argument) and compare this with set time
-//provide multiple default alarms (start with 1-3). These are Alarm objects
 class AlarmMode : public IMode
 {
   private:
-    const static int maxAlarmQuantity {
-      3
-    };
-    const static int timeToActivateLightMin{1};
+    const static int maxAlarmQuantity PROGMEM = 3;
+    const static int timeToActivateLightMin PROGMEM = 1;
 
     int currentAlarmQuantity{};
     int currentDisplayedAlarm{};
@@ -24,8 +20,8 @@ class AlarmMode : public IMode
 
     unsigned long previousAlarmMillis{};
 
-    const static int numberOfOptions{5};
-    const String optionNames[numberOfOptions] {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
+    const static int numberOfOptions PROGMEM = 5;
+    const String optionNames[numberOfOptions] PROGMEM = {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
     int currentDisplayedOption{};
 
     ILogger *logger;
@@ -45,12 +41,12 @@ class AlarmMode : public IMode
       currentAlarmQuantity = 0;
     }
 
-    int getTimeToActivateLightMin() const{
+    int getTimeToActivateLightMin() const {
       return timeToActivateLightMin;
     }
 
     void displayOptions() {
-      const int displayOptionsIntervalMS{3000};
+      const int displayOptionsIntervalMS PROGMEM = 3000;
 
       //display different alarm mode options
       unsigned long currentAlarmMillis = millis();
@@ -116,7 +112,7 @@ class AlarmMode : public IMode
     //option 1
     void displayExistingAlarms()
     {
-      const int displayAlarmsIntervalMS{3000};
+      const int displayAlarmsIntervalMS PROGMEM = 3000;
 
       //continue alarm display until # is entered (quit)
       while (!io->enteredHash()) {
@@ -124,15 +120,15 @@ class AlarmMode : public IMode
         if ((unsigned long)(currentAlarmMillis - previousAlarmMillis) >= displayAlarmsIntervalMS) {
           io->clearScreen();
           io->setCursor(0, 0);
-          io->print("Alarms (#=Quit):");
+          io->print(F("Alarms (#=Quit):"));
 
           if (currentAlarmQuantity == 0) {
             io->setCursor(0, 2);
-            io->print("0 alarms to display");
+            io->print(F("0 alarms to display"));
           } else {
             Alarm alarm = alarms[currentDisplayedAlarm];
             io->setCursor(0, 1);
-            io->print("Alarm ");
+            io->print(F("Alarm "));
             io->print(currentDisplayedAlarm + 1); //first alarm has number 1 and is stored in alarms[0]
             io->setCursor(0, 2);
             io->print("Time: ");
@@ -140,7 +136,7 @@ class AlarmMode : public IMode
             io->printDigits(alarm.getMinute());
             io->setCursor(0, 3);
             io->print("Status: ");
-            io->print(alarm.getStatus() ? "Enabled" : "Disabled");
+            io->print(alarm.getStatus() ? F("Enabled") : F("Disabled"));
 
             currentDisplayedAlarm++;
 
@@ -165,15 +161,15 @@ class AlarmMode : public IMode
       {
         while (!io->enteredHash()) {
           io->setCursor(0, 0);
-          io->print("Max alarm quantity");
+          io->print(F("Max alarm quantity"));
           io->setCursor(0, 1);
-          io->print("reached");
+          io->print(F("reached"));
           io->setCursor(0, 3);
-          io->print("Enter # to quit");
+          io->print(F("Enter # to quit"));
         }
       } else {
         io->setCursor(0, 0);
-        io->print("Entering alarm time");
+        io->print(F("Entering alarm time"));
         int* alarmTime = io->getTime();
         if (!alarmTime) {
           return;
@@ -197,19 +193,19 @@ class AlarmMode : public IMode
       {
         while (!io->enteredHash()) {
           io->setCursor(0, 0);
-          io->print("No alarm to display");
+          io->print(F("No alarm to display"));
           io->setCursor(0, 2);
-          io->print("Enter # to quit");
+          io->print(F("Enter # to quit"));
         }
       } else {
         int alarmNumber{}; //alarm index in alarms[] will be alarmNumber - 1
 
         io->setCursor(0, 3);
-        io->print("Enter # to quit");
+        io->print(F("Enter # to quit"));
         io->setCursor(0, 0);
-        io->print("Enter number of");
+        io->print(F("Enter number of"));
         io->setCursor(0, 1);
-        io->print("alarm to delete: ");
+        io->print(F("alarm to delete: "));
         io->showCursor();
         char input = io->getValidDigitOrHashBlocking();
 
@@ -256,25 +252,25 @@ class AlarmMode : public IMode
         while (!io->enteredHash()) {
           io->setCursor(0, 0);
           if (newStatus) {
-            io->print("No alarm to enable");
+            io->print(F("No alarm to enable"));
           } else {
-            io->print("No alarm to disable");
+            io->print(F("No alarm to disable"));
           }
           io->setCursor(0, 2);
-          io->print("Enter # to quit");
+          io->print(F("Enter # to quit"));
         }
       } else {
         int alarmNumber{}; //alarm index in alarms[] will be alarmNumber - 1
 
         io->setCursor(0, 3);
-        io->print("Enter # to quit");
+        io->print(F("Enter # to quit"));
         io->setCursor(0, 0);
-        io->print("Enter number of");
+        io->print(F("Enter number of"));
         io->setCursor(0, 1);
         if (newStatus) {
-          io->print("alarm to enable: ");
+          io->print(F("alarm to enable: "));
         } else {
-          io->print("alarm to disable: ");
+          io->print(F("alarm to disable: "));
         }
         io->showCursor();
         char input = io->getValidDigitOrHashBlocking();
