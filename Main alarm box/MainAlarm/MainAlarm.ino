@@ -64,6 +64,9 @@ void setup()
   modes[2] = timerMode;
   modes[3] = clockMode;
 
+  //turn of light if send turn on before power loss
+  commSystem->disableLight();
+
   //set default time
   clockMode->changeTime(0, 0);
 }
