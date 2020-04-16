@@ -7,7 +7,7 @@ SoftwareSerial BTSerial(2, 3); //RX | TX => arduino RX must be connected to HC-0
 const byte lightPin PROGMEM = A0;
 
 //variables to store ms till duty cycle
-int dutyCycle25, dutyCycle50, dutyCycle75, dutyCycle100;
+unsigned long dutyCycle25, dutyCycle50, dutyCycle75, dutyCycle100;
 bool lightByTimeEn{};
 
 void setup() {
@@ -55,7 +55,7 @@ void loop() {
 
   //check if currently running a 'T' instruction
   if (lightByTimeEn) {
-    int currentTime = millis();
+    unsigned long currentTime = millis();
     if (currentTime > dutyCycle100) {
       analogWrite(lightPin, 255);
     } else if (currentTime > dutyCycle50) {
@@ -66,13 +66,13 @@ void loop() {
   }
 }
 
-void computeTimeForDutyCycles(int timeTillFullyOnMS) {
-  int timeForOneCylce = timeTillFullyOnMS / 3; //have 3 duty cycles till duty cycle = 100
-  int currentTime = millis();
+void computeTimeForDutyCycles(unsigned long timeTillFullyOnMS) {
+  unsigned long timeForOneCycle = timeTillFullyOnMS / 3; //have 3 duty cycles till duty cycle = 100
+  unsigned long currentTime = millis();
   dutyCycle25 = currentTime; //start this now
-  dutyCycle50 = currentTime + timeForOneCylce;
-  dutyCycle75 = currentTime + timeForOneCylce * 2;
-  dutyCycle100 = currentTime + timeForOneCylce * 3;
+  dutyCycle50 = currentTime + timeForOneCycle;
+  dutyCycle75 = currentTime + timeForOneCycle * 2;
+  dutyCycle100 = currentTime + timeForOneCycle * 3;
 }
 
 void enableLightBasedOnDutyCycle(int dutyCycle) {
