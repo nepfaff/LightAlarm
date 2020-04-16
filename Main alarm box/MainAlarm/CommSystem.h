@@ -29,7 +29,6 @@ class CommSystem
     }
 
     void enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin) const {
-      Serial.println(millis());
       //only enable light every certain interval (otherwise bluetooth buffer will overflow and data will be corrupted)
       unsigned long currentLightEnableMS = millis();
       if ((unsigned long)(currentLightEnableMS - previousLightEnableMS) >= enableLightIntervalMS) {

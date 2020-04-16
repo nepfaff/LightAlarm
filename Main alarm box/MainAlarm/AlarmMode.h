@@ -7,6 +7,7 @@
 #include "IMode.h"
 #include "ILogger.h"
 #include "UserIO.h"
+#include "CommSystem.h"
 
 class AlarmMode : public IMode
 {
@@ -27,10 +28,11 @@ class AlarmMode : public IMode
     ILogger *logger;
     UserIO *io;
     ClockMode *clock;
+    CommSystem *commSystem;
 
   public:
-    AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock)
-      : logger{_logger}, io(_io), clock{_clock}, IMode("Alarm mode") {}
+    AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock, CommSystem *_commSystem)
+      : logger{_logger}, io(_io), clock{_clock}, commSystem{_commSystem}, IMode("Alarm mode") {}
 
     void resetAll() override
     {
@@ -221,6 +223,11 @@ class AlarmMode : public IMode
 
           int alarmIdx{(int)input - 49}; //alarm index in alarms[] (alarm number - 1)
 
+          //disable light that was enabled due to an alarm ringing soon
+          if (checkIfActivatedLightByAlarm(alarms[alarmIdx])) {
+            commSystem->disableLight();
+          }
+
           if (alarmNumber == currentAlarmQuantity - 1) {
             //remove last element from array
             alarms[alarmIdx] = {};
@@ -295,12 +302,19 @@ class AlarmMode : public IMode
     }
 
     //option 6
-    void deleteAllExistingAlarms(){
+    void deleteAllExistingAlarms() {
       io->clearScreen();
-      
+
+      //disable light that was enabled due to an alarm ringing soon
+      for (int i{}; i < currentAlarmQuantity; i++) {
+        if (checkIfActivatedLightByAlarm(alarms[i])) {
+          commSystem->disableLight();
+        }
+      }
+
       memset(alarms, 0, sizeof(alarms));
       currentAlarmQuantity = 0;
-      
+
       io->setCursor(0, 1);
       io->print(F("Deleted all"));
       io->setCursor(0, 2);
@@ -329,7 +343,7 @@ class AlarmMode : public IMode
     }
 
     //start activating light set time before alarm starts
-    bool activateLight() {
+    bool activateLight() const {
       for (int i{}; i < currentAlarmQuantity; i++) {
         if (alarms[i].getStatus() && alarms[i].getMinute() >= timeToActivateLightMin && alarms[i].getHour() == clock->getHour() && alarms[i].getMinute() - timeToActivateLightMin == clock->getMinute()) {
           return true;
@@ -338,6 +352,17 @@ class AlarmMode : public IMode
         {
           return true;
         }
+      }
+      return false;
+    }
+
+    bool checkIfActivatedLightByAlarm(const Alarm &alarm) const {
+      if (alarm.getStatus() && alarm.getMinute() >= timeToActivateLightMin && alarm.getHour() == clock->getHour() && alarm.getMinute() - timeToActivateLightMin <= clock->getMinute()) {
+        return true;
+      }
+      else if (alarm.getStatus() && (alarm.getHour() - 1) == clock->getHour() && (alarm.getMinute() + 60 - timeToActivateLightMin) <= clock->getMinute())
+      {
+        return true;
       }
       return false;
     }

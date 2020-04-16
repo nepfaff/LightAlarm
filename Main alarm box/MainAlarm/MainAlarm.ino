@@ -57,7 +57,7 @@ void setup()
   soundSystem = new SoundSystem(logger);
   commSystem = new CommSystem(logger);
   clockMode = new ClockMode(logger, io);
-  alarmMode = new AlarmMode(logger, io, clockMode);
+  alarmMode = new AlarmMode(logger, io, clockMode, commSystem);
   timerMode = new TimerMode(logger, io);
   //leave modes[0] empty as this represents the default mode
   modes[1] = alarmMode;
