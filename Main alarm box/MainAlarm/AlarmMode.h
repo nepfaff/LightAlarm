@@ -11,18 +11,18 @@
 class AlarmMode : public IMode
 {
   private:
-    const static int maxAlarmQuantity PROGMEM = 3;
-    const static int timeToActivateLightMin PROGMEM = 1;
+    const static byte maxAlarmQuantity PROGMEM = 3;
+    const static byte timeToActivateLightMin PROGMEM = 1;
 
-    int currentAlarmQuantity{};
-    int currentDisplayedAlarm{};
+    int currentAlarmQuantity;
+    int currentDisplayedAlarm;
     Alarm alarms[maxAlarmQuantity] {}; //position 0 in array holds alarm with number 1
 
-    unsigned long previousAlarmMillis{};
+    unsigned long previousAlarmMillis;
 
-    const static int numberOfOptions PROGMEM = 5;
+    const static byte numberOfOptions PROGMEM = 5;
     const String optionNames[numberOfOptions] PROGMEM = {"1. Display alarms", "2. New alarm", "3. Delete alarm", "4. Enable alarm", "5. Disable alarm"};
-    int currentDisplayedOption{};
+    byte currentDisplayedOption{};
 
     ILogger *logger;
     UserIO *io;
@@ -46,8 +46,7 @@ class AlarmMode : public IMode
     }
 
     void displayOptions() {
-      const int displayOptionsIntervalMS PROGMEM = 3000;
-
+      const unsigned long displayOptionsIntervalMS PROGMEM = 3000;
       //display different alarm mode options
       unsigned long currentAlarmMillis = millis();
       if ((unsigned long)(currentAlarmMillis - previousAlarmMillis) >= displayOptionsIntervalMS) {
@@ -89,6 +88,7 @@ class AlarmMode : public IMode
     void executeOption(int selectedOption) {
       switch (selectedOption) {
         case 1: //display existing alarms
+          previousAlarmMillis = 0; //eliminate any possible delay
           displayExistingAlarms();
           break;
         case 2: //create new alarm
@@ -112,7 +112,7 @@ class AlarmMode : public IMode
     //option 1
     void displayExistingAlarms()
     {
-      const int displayAlarmsIntervalMS PROGMEM = 3000;
+      const unsigned long displayAlarmsIntervalMS PROGMEM = 3000;
 
       //continue alarm display until # is entered (quit)
       while (!io->enteredHash()) {

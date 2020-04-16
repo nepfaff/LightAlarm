@@ -5,7 +5,7 @@
 
 #include "ILogger.h"
 
-const int activeBuzzerPin PROGMEM = 2;
+const byte activeBuzzerPin PROGMEM = 2;
 
 /*
    rings buzzers, plays sd audio files, etc.

@@ -43,7 +43,7 @@ IMode* modes[modeNumber];
 int currentMode{0};
 
 //default display of modes on screen (mode 0)
-const int displayModeIntervalMS PROGMEM = 1500; //determines time between displaying different mode options on screen
+const unsigned long displayModeIntervalMS PROGMEM = 1500; //determines time between displaying different mode options on screen
 unsigned long previousMillis{};
 int currentDisplayedMode = 1; //don't display default mode 0
 
@@ -90,6 +90,7 @@ void loop()
     }
 
     soundSystem->stopRingingBuzzerAlarm();
+    commSystem->disableLight();
     alarmMode->changeExistingAlarmStatusOnId(activeAlarmId, false);
 
     currentMode = 0;
@@ -98,7 +99,7 @@ void loop()
 
   //happens prior to an alarm becoming active
   if (alarmMode->activateLight()) {
-    commSystem->enableLightBasedOnTimeTillAlarm(alarmMode->getTimeToActivateLightMin());
+    commSystem->enableLightBasedOnTimeTillAlarmMin(alarmMode->getTimeToActivateLightMin());
   }
 
   //change functionality based on current mode

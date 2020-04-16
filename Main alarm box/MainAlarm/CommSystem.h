@@ -9,6 +9,9 @@
 //used for bluetooth communication with light box
 SoftwareSerial *BTSerial;
 
+const unsigned long enableLightIntervalMS PROGMEM = 60000;
+unsigned long previousLightEnableMS;
+
 /*
    responsible for communication with other microcontrollers
 */
@@ -25,11 +28,25 @@ class CommSystem
       BTSerial->begin(38400);
     }
 
-    void enableLightBasedOnTimeTillAlarm(int timeTillAlarm) {
-      logger->logInfo(F("Sending command to activate light based on time"));
+    void enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin) const {
+      Serial.println(millis());
+      //only enable light every certain interval (otherwise bluetooth buffer will overflow and data will be corrupted)
+      unsigned long currentLightEnableMS = millis();
+      if ((unsigned long)(currentLightEnableMS - previousLightEnableMS) >= enableLightIntervalMS) {
+        logger->logInfo(F("Sending command to activate light based on time"));
 
-      BTSerial->write(F("T")); //T = enable light based on time parameter
-      BTSerial->write(timeTillAlarm);
+        BTSerial->write("T"); //T = enable light based on time parameter
+        BTSerial->write(timeTillAlarmMin);
+
+        previousLightEnableMS = currentLightEnableMS;
+      }
+    }
+
+    void disableLight() const {
+      logger->logInfo(F("Sending command to disable light"));
+
+      BTSerial->write("X");
+      BTSerial->write(1);
     }
 };
 
