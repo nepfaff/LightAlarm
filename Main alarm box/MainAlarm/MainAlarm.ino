@@ -81,6 +81,10 @@ void loop()
   if (activeAlarmId) {
     io->clearScreen();
 
+    //enable light as light might have been disabled before alarm time (e.g. timer activated and deactivated light since light command has been send)
+    commSystem->enableLightBasedOnDutyCycle(100); //dutyCycle = 100 corresponds to maximum brightness
+    soundSystem->startRingingBuzzerAlarm();
+
     while (!io->getKey()) {
       io->setCursor(0, 0);
       clockMode->digitalClockDisplay();
@@ -88,8 +92,6 @@ void loop()
       io->print(F("Press any key"));
       io->setCursor(0, 3);
       io->print(F("to disable the alarm"));
-
-      soundSystem->startRingingBuzzerAlarm();
     }
 
     soundSystem->stopRingingBuzzerAlarm();
@@ -103,6 +105,28 @@ void loop()
   //happens prior to an alarm becoming active
   if (alarmMode->activateLight()) {
     commSystem->enableLightBasedOnTimeTillAlarmMin(alarmMode->getTimeToActivateLightMin());
+  }
+
+  //logic for what happens if the timer is over
+  if(timerMode->hasTimerFinished()){
+    io->clearScreen();
+
+    commSystem->enableLightBasedOnDutyCycle(100); //dutyCycle = 100 corresponds to maximum brightness
+    soundSystem->startRingingBuzzerAlarm();
+
+    while (!io->getKey()) {
+      io->setCursor(0, 1);
+      io->print(F("Press any key"));
+      io->setCursor(0, 2);
+      io->print(F("to disable the timer"));
+    }
+
+    soundSystem->stopRingingBuzzerAlarm();
+    commSystem->disableLight();
+    timerMode->disableTimer();
+
+    currentMode = 0;
+    io->clearScreen();
   }
 
   //change functionality based on current mode
@@ -157,7 +181,21 @@ void loop()
       io->clearScreen();
     }
   } else if (currentMode == 2) { //timer mode
-    currentMode = 0;
+    timerMode->displayTimeLeft();
+    timerMode->displayOptions();
+    int currentOption = timerMode->selectOption();
+
+    //0 when no option selected yet, 100 when quit
+    if (currentOption == 100) {
+      currentMode = 0;
+    } else if (currentOption) {
+      timerMode->executeOption(currentOption);
+      currentMode = 0;
+    }
+    
+    if (currentMode != 2) {
+      io->clearScreen();
+    }
   } else if (currentMode == 3) { //clock mode
     //display current time
     io->setCursor(0, 0);

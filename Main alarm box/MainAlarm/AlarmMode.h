@@ -41,6 +41,12 @@ class AlarmMode : public IMode
         alarms[i] = {};
       }
       currentAlarmQuantity = 0;
+
+      commSystem->disableLight();
+    }
+
+    byte getNumberOfOptions() const {
+      return numberOfOptions;
     }
 
     int getTimeToActivateLightMin() const {
@@ -71,18 +77,12 @@ class AlarmMode : public IMode
       }
     }
 
-    //0 when no option selected yet, 100 when quit
-    int selectOption() {
-      char input = io->getValidDigitOrHash();
-      if (input == '#') {
-        currentDisplayedOption = 0; //make sure to start with displaying first option when alarmMode is entered again
-        return 100;
-      } else if (input && (int)input - 48 <= numberOfOptions) {
-        currentDisplayedOption = 0;
-        return (int)input - 48;
-      } else {
-        return 0;
+    byte selectOption() {
+      byte option = io->selectOption(numberOfOptions);
+      if (option) {
+        currentDisplayedOption = 0; //make sure to start with displaying first option when displayOptions() is entered again
       }
+      return option;
     }
 
     //executes selected option
@@ -109,7 +109,7 @@ class AlarmMode : public IMode
           deleteAllExistingAlarms();
           break;
         default:
-          logger->logError("Tried to execute non-existing alarm option", "AlarmMode, executeOption");
+          logger->logError(F("Tried to execute non-existing alarm option"), F("AlarmMode, executeOption"));
           break;
       }
     }
@@ -136,11 +136,11 @@ class AlarmMode : public IMode
             io->print(F("Alarm "));
             io->print(currentDisplayedAlarm + 1); //first alarm has number 1 and is stored in alarms[0]
             io->setCursor(0, 2);
-            io->print("Time: ");
+            io->print(F("Time: "));
             io->printDigits(alarm.getHour(), true);
             io->printDigits(alarm.getMinute());
             io->setCursor(0, 3);
-            io->print("Status: ");
+            io->print(F("Status: "));
             io->print(alarm.getStatus() ? F("Enabled") : F("Disabled"));
 
             currentDisplayedAlarm++;

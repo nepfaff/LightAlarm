@@ -28,13 +28,20 @@ class CommSystem
       BTSerial->begin(38400);
     }
 
+    void enableLightBasedOnDutyCycle(byte dutyCycle) const{
+      logger->logInfo(F("Sending command to activate light now"));
+
+        BTSerial->write("D"); //D = enable light based on duty cycle argument
+        BTSerial->write(dutyCycle);
+    }
+
     void enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin) const {
       //only enable light every certain interval (otherwise bluetooth buffer will overflow and data will be corrupted)
       unsigned long currentLightEnableMS = millis();
       if ((unsigned long)(currentLightEnableMS - previousLightEnableMS) >= enableLightIntervalMS) {
         logger->logInfo(F("Sending command to activate light based on time"));
 
-        BTSerial->write("T"); //T = enable light based on time parameter
+        BTSerial->write("T"); //T = enable light based on time argument
         BTSerial->write(timeTillAlarmMin);
 
         previousLightEnableMS = currentLightEnableMS;

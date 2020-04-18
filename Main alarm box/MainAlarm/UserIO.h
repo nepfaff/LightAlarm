@@ -18,8 +18,8 @@ class UserIO
     LiquidCrystal_I2C *screen;
     Keypad *keyIn;
 
-    //helper function for getTime
-    bool getTimeDigit(String &timeContainer, int maxDigit) {
+    //helper function for getTime() and getHoursMinutesSeconds()
+    bool getTimeDigit(String callerFunction, String &timeContainer, int maxDigit) {
       char input = getValidDigitOrHashBlocking();
       if (input == '#') {
         return 0;
@@ -29,7 +29,13 @@ class UserIO
         return 1;
       } else {
         //restart user input
-        return getTime();
+        if (callerFunction == "getTime") {
+          return getTime();
+        } else if (callerFunction == "getHoursMinutesSeconds") {
+          return getHoursMinutesSeconds();
+        } else {
+          logger->logError(F("Invalid caller function"), F("UserIO, getTimeDigit"));
+        }
       }
     }
 
@@ -79,6 +85,11 @@ class UserIO
       screen->setCursor(column, row);
     }
 
+    void clearRow(byte row) {
+      setCursor(0, row);
+      print(F("                    "));
+    }
+
     void enableBacklight() {
       screen->backlight();
     }
@@ -103,30 +114,30 @@ class UserIO
       return keyIn->getKey();
     }
 
-    bool enteredHash(){
-      if(keyIn->getKey() == '#'){
+    bool enteredHash() {
+      if (keyIn->getKey() == '#') {
         return true;
       }
       return false;
     }
 
-    char getValidDigitOrHash(){
+    char getValidDigitOrHash() {
       char key = keyIn->getKey();
-      if(isdigit(key) || key == '#'){
+      if (isdigit(key) || key == '#') {
         return key;
-      }else if(key){
+      } else if (key) {
         logger->logInfo(F("Key not a valid input"));
       }
-       return 0;
+      return 0;
     }
 
-    char getValidDigitOrHashBlocking(){
+    char getValidDigitOrHashBlocking() {
       char key = keyIn->waitForKey();
-      if(isdigit(key) || key == '#'){
+      if (isdigit(key) || key == '#') {
         return key;
       }
-       logger->logInfo(F("Key not a valid input"));
-       return 0;
+      logger->logInfo(F("Key not a valid input"));
+      return 0;
     }
 
     int getValidModeInt(const int modeNumber) const {
@@ -144,14 +155,25 @@ class UserIO
       return 0; //0 indicates default mode
     }
 
+    //0 when no option selected yet, 100 when quit
+    byte selectOption(byte numberOfOptions) {
+      char input = getValidDigitOrHash();
+      if (input == '#') {
+        return 100;
+      } else if (input && (int)input - 48 <= numberOfOptions) {
+        return (int)input - 48;
+      } else {
+        return 0;
+      }
+    }
+
     //returns [hour, minute] or 0 if quit
     int* getTime()
     {
       String hour{}, minute{};
-      
+
       //remove mess that was potentially left behind by invalid input
-      setCursor(0, 2);
-      print("                    ");
+      clearRow(2);
       showCursor();
 
       //get hour
@@ -161,34 +183,33 @@ class UserIO
       print(F("Hour: "));
 
       //get MSB hour digit
-      if (!getTimeDigit(hour, 2)) {
+      if (!getTimeDigit("getTime", hour, 2)) {
         return 0;
       }
       //get LSB hour digit
       if (hour == "0" || hour == "1") {
-        if (!getTimeDigit(hour, 9)) {
+        if (!getTimeDigit("getTime", hour, 9)) {
           return 0;
         }
       } else {
-        if (!getTimeDigit(hour, 3)) {
+        if (!getTimeDigit("getTime", hour, 3)) {
           return 0;
         }
       }
 
       //get minute
-      setCursor(0, 1);
-      print("                    ");
+      clearRow(1);
       setCursor(0, 1);
       print(F("Enter min (#=Quit):"));
       setCursor(0, 2);
       print(F("Minute: "));
 
       //get MSB minute digit
-      if (!getTimeDigit(minute, 5)) {
+      if (!getTimeDigit("getTime", minute, 5)) {
         return 0;
       }
       //get LSB minute digit
-      if (!getTimeDigit(minute, 9)) {
+      if (!getTimeDigit("getTime", minute, 9)) {
         return 0;
       }
 
@@ -198,6 +219,72 @@ class UserIO
       time[0] = hour.toInt();
       time[1] = minute.toInt();
       return time;
+    }
+
+    //returns [hours, minutes, seconds] or 0 if quit
+    int* getHoursMinutesSeconds() {
+      String hours{}, minutes{}, seconds{};
+
+      //remove mess that was potentially left behind by invalid input
+      clearRow(2);
+      showCursor();
+
+      //get hours
+      setCursor(0, 1);
+      print(F("Enter hour (#=Quit):"));
+      setCursor(0, 2);
+      print(F("Hours: "));
+
+      //get MSB hours digit
+      if (!getTimeDigit("getHoursMinutesSeconds", hours, 9)) {
+        return 0;
+      }
+      //get LSB hours digit
+      if (!getTimeDigit("getHoursMinutesSeconds", hours, 9)) {
+        return 0;
+      }
+
+      //get minutes
+      clearRow(1);
+      clearRow(2);
+      setCursor(0, 1);
+      print(F("Enter mins (#=Quit):"));
+      setCursor(0, 2);
+      print(F("Minutes: "));
+
+      //get MSB minutes digit
+      if (!getTimeDigit("getHoursMinutesSeconds", minutes, 5)) {
+        return 0;
+      }
+      //get LSB minutes digit
+      if (!getTimeDigit("getHoursMinutesSeconds", minutes, 9)) {
+        return 0;
+      }
+
+      //get seconds
+      clearRow(1);
+      clearRow(2);
+      setCursor(0, 1);
+      print(F("Enter secs (#=Quit):"));
+      setCursor(0, 2);
+      print(F("Seconds: "));
+
+      //get MSB seconds digit
+      if (!getTimeDigit("getHoursMinutesSeconds", seconds, 5)) {
+        return 0;
+      }
+      //get LSB seconds digit
+      if (!getTimeDigit("getHoursMinutesSeconds", seconds, 9)) {
+        return 0;
+      }
+
+      hideCursor();
+
+      int* durations = new int[3];
+      durations[0] = hours.toInt();
+      durations[1] = minutes.toInt();
+      durations[2] = seconds.toInt();
+      return durations;
     }
 };
 
