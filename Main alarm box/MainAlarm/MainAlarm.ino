@@ -6,6 +6,7 @@
 #include "TimerMode.h"
 #include "SoundSystem.h"
 #include "CommSystem.h"
+#include "StorageSystem.h"
 
 //keypad setup (needs to be prior to Setup, hence cannot do it inside UserIO constructor)
 const byte rows PROGMEM = 4;
@@ -26,9 +27,10 @@ SerialLogger *logger;
 //user IO
 UserIO *io;
 
-//sound and communication system
+//sound, communication and storage system
 SoundSystem *soundSystem;
 CommSystem *commSystem;
+StorageSystem *storageSystem;
 
 //setup different modes
 ClockMode *clockMode;
@@ -56,8 +58,9 @@ void setup()
   io = new UserIO(logger, keyIn);
   soundSystem = new SoundSystem(logger);
   commSystem = new CommSystem(logger);
+  storageSystem = new StorageSystem(logger);
   clockMode = new ClockMode(logger, io);
-  alarmMode = new AlarmMode(logger, io, clockMode, commSystem);
+  alarmMode = new AlarmMode(logger, io, clockMode, commSystem, storageSystem);
   timerMode = new TimerMode(logger, io);
   //leave modes[0] empty as this represents the default mode
   modes[1] = alarmMode;

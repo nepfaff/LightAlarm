@@ -8,6 +8,7 @@
 #include "ILogger.h"
 #include "UserIO.h"
 #include "CommSystem.h"
+#include "StorageSystem.h"
 
 class AlarmMode : public IMode
 {
@@ -17,7 +18,7 @@ class AlarmMode : public IMode
 
     int currentAlarmQuantity{};
     int currentDisplayedAlarm{};
-    Alarm alarms[maxAlarmQuantity]{}; //position 0 in array holds alarm with number 1
+    Alarm alarms[maxAlarmQuantity] {}; //position 0 in array holds alarm with number 1
 
     unsigned long previousAlarmMillis;
 
@@ -29,10 +30,20 @@ class AlarmMode : public IMode
     UserIO *io;
     ClockMode *clock;
     CommSystem *commSystem;
+    StorageSystem *storageSystem;
 
   public:
-    AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock, CommSystem *_commSystem)
-      : logger{_logger}, io(_io), clock{_clock}, commSystem{_commSystem}, IMode("Alarm mode") {}
+    AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock, CommSystem *_commSystem, StorageSystem *_storageSystem)
+      : logger{_logger}, io(_io), clock{_clock}, commSystem{_commSystem}, storageSystem{_storageSystem}, IMode("Alarm mode") {
+   
+      //retrieve alarms that were stored in EEPROM
+      currentAlarmQuantity = storageSystem->retrieveStoredAlarmQuantityEEPROM();
+      Alarm* storedAlarms = storageSystem->retrieveAlarmsEEPROM(currentAlarmQuantity);
+      for (int i{}; i < currentAlarmQuantity; i++) {
+        alarms[i] = storedAlarms[i];
+      }
+      delete[] storedAlarms;
+    }
 
     void resetAll() override
     {
@@ -43,6 +54,9 @@ class AlarmMode : public IMode
       currentAlarmQuantity = 0;
 
       commSystem->disableLight();
+
+      //does reseting for EEPROM
+      storageSystem->clearEEPROM();
     }
 
     byte getNumberOfOptions() const {
@@ -113,6 +127,8 @@ class AlarmMode : public IMode
           break;
       }
       previousAlarmMillis = 0; //eliminate any possible delay
+
+      storageSystem->updateAlarmsEEPROM(alarms, currentAlarmQuantity);
     }
 
     //option 1
@@ -181,7 +197,8 @@ class AlarmMode : public IMode
           return;
         }
 
-        int hour{alarmTime[0]}, minute{alarmTime[1]};
+        //intentionally using a narrowing conversion
+        byte hour{alarmTime[0]}, minute{alarmTime[1]};
         delete[] alarmTime;
 
         Alarm newAlarm(hour, minute, true);
@@ -357,7 +374,7 @@ class AlarmMode : public IMode
       return false;
     }
 
-    bool checkIfActivatedLightByAlarm(const Alarm &alarm) const {
+    bool checkIfActivatedLightByAlarm(const Alarm & alarm) const {
       if (alarm.getStatus() && alarm.getMinute() >= timeToActivateLightMin && alarm.getHour() == clock->getHour() && alarm.getMinute() - timeToActivateLightMin <= clock->getMinute()) {
         return true;
       }

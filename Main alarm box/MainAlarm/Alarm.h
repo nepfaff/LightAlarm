@@ -6,19 +6,19 @@
 class Alarm
 {
   private:
-    static int currentId; //id needs to start with 1 as 0 is used for returning false
+    static byte currentId; //id needs to start with 1 as 0 is used for returning false
 
-    int id;
-    int hour;
-    int minute;
-    bool enabled;
+    byte id;
+    byte hour;
+    byte minute;
+    bool isEnabled;
     //could pottetially add soundrack name to select from sd card
 
   public:
     Alarm()
-      : id{ -1}, hour{ -1}, minute{ -1}, enabled{false} {}
-    Alarm(int _hour, int _minute, bool _enabled)
-      : id{currentId}, hour{_hour}, minute{_minute}, enabled{_enabled} {
+      : id{255}, hour{255}, minute{255}, isEnabled{false} {}
+    Alarm(byte _hour, byte _minute, bool _isEnabled)
+      : id{currentId}, hour{_hour}, minute{_minute}, isEnabled{_isEnabled} {
       currentId++;
 
       //make sure that currentId is never zero (overflow)
@@ -28,29 +28,29 @@ class Alarm
     }
 
     //only provide getters => Cannot modify alarm time after creation (needs to be destoyed and recreated)
-    int getId() const
+    byte getId() const
     {
       return id;
     }
-    int getHour() const
+    byte getHour() const
     {
       return hour;
     }
-    int getMinute() const
+    byte getMinute() const
     {
       return minute;
     }
     bool getStatus() const
     {
-      return enabled;
+      return isEnabled;
     }
     
     int setStatus(bool newStatus)
     {
-      enabled = newStatus;
+      isEnabled = newStatus;
     }
 };
 
-int Alarm::currentId = 1;
+byte Alarm::currentId = 1;
 
 #endif
