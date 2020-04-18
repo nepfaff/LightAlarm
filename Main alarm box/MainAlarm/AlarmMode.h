@@ -35,7 +35,7 @@ class AlarmMode : public IMode
   public:
     AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock, CommSystem *_commSystem, StorageSystem *_storageSystem)
       : logger{_logger}, io(_io), clock{_clock}, commSystem{_commSystem}, storageSystem{_storageSystem}, IMode("Alarm mode") {
-   
+
       //retrieve alarms that were stored in EEPROM
       currentAlarmQuantity = storageSystem->retrieveStoredAlarmQuantityEEPROM();
       Alarm* storedAlarms = storageSystem->retrieveAlarmsEEPROM(currentAlarmQuantity);
@@ -128,6 +128,7 @@ class AlarmMode : public IMode
       }
       previousAlarmMillis = 0; //eliminate any possible delay
 
+      //store any updates made to alarms => can restore them after power outage
       storageSystem->updateAlarmsEEPROM(alarms, currentAlarmQuantity);
     }
 

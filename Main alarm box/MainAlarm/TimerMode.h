@@ -122,6 +122,7 @@ class TimerMode : public IMode
           logger->logError(F("Tried to execute non-existing timer option"), F("TimerMode, executeOption"));
           break;
       }
+      previousTimerMillis = 0; //eliminate any possible delay
     }
 
     //option 1
