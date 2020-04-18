@@ -112,6 +112,7 @@ class AlarmMode : public IMode
           logger->logError(F("Tried to execute non-existing alarm option"), F("AlarmMode, executeOption"));
           break;
       }
+      previousAlarmMillis = 0; //eliminate any possible delay
     }
 
     //option 1

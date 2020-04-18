@@ -174,7 +174,7 @@ void loop()
       currentMode = 0;
     } else if (currentOption) {
       alarmMode->executeOption(currentOption);
-      currentMode = 0;
+      io->clearScreen();
     }
 
     if (currentMode != 1) {
@@ -190,7 +190,7 @@ void loop()
       currentMode = 0;
     } else if (currentOption) {
       timerMode->executeOption(currentOption);
-      currentMode = 0;
+      io->clearScreen();
     }
     
     if (currentMode != 2) {
