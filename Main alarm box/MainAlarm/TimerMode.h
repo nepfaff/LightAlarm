@@ -17,7 +17,7 @@ class TimerMode : public IMode
     unsigned long timeAtPauseStartMS;
 
     const static byte numberOfOptions PROGMEM = 6;
-    const String optionNames[numberOfOptions] PROGMEM = {"1. New timer", "2. Disable timer", "3. Pause timer", "4. Resume timer", "5. Restart timer"};
+    const String optionNames[numberOfOptions] = {"1. New timer", "2. Disable timer", "3. Pause timer", "4. Resume timer", "5. Restart timer"};
     byte currentDisplayedOption{};
 
     unsigned long previousTimerMillis;
@@ -134,7 +134,7 @@ class TimerMode : public IMode
         return;
       }
 
-      byte hours{durations[0]}, minutes{durations[1]}, seconds{durations[2]};
+      int hours{durations[0]}, minutes{durations[1]}, seconds{durations[2]};
       delete[] durations;
 
       isEnabled = true;
