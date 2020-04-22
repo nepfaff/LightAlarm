@@ -34,32 +34,36 @@ class CommSystem
       resetLightMasterEnable();
     }
 
+    bool getCurrentLightMasterEnabelState() const {
+      return currentLightMasterEnabelState;
+    }
+
     //applies for automatic light functionality (manuel functinality unaffected)
-    void toggleLightMasterEnable(){
+    void toggleLightMasterEnable() {
       logger->logInfo("Toggeling light master enable");
-      if(currentLightMasterEnabelState){
+      if (currentLightMasterEnabelState) {
         BTSerial->write("M"); //M = change master light enable state to state passed as data argument
         BTSerial->write(false);
         currentLightMasterEnabelState = false;
-      }else{
-        BTSerial->write("M"); 
+      } else {
+        BTSerial->write("M");
         BTSerial->write(true);
         currentLightMasterEnabelState = true;
       }
     }
 
     //used to ensure that stored state is consistent with state in light box
-    void resetLightMasterEnable(){
+    void resetLightMasterEnable() {
       //default state is true (enabled)
       currentLightMasterEnabelState = false;
       toggleLightMasterEnable();
     }
 
-    void enableLightBasedOnDutyCycle(byte dutyCycle) const{
+    void enableLightBasedOnDutyCycle(byte dutyCycle) const {
       logger->logInfo(F("Sending command to activate light now"));
 
-        BTSerial->write("D"); //D = enable light based on duty cycle argument
-        BTSerial->write(dutyCycle);
+      BTSerial->write("D"); //D = enable light based on duty cycle argument
+      BTSerial->write(dutyCycle);
     }
 
     void enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin) const {

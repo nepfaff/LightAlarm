@@ -94,16 +94,6 @@ void loop()
   //display if an alarm is enabled
   //show by showing * in top right corner?
 
-  //enable/disable automatic light functionality
-  unsigned long currentLightMasterEnableMillis = millis();
-  if ((unsigned long)(currentLightMasterEnableMillis - previousLightMasterEnableMillis) >= lightMasterEnableIntervalMS) {
-    if (digitalRead(lightStateToggleButton)) {
-      commSystem->toggleLightMasterEnable();
-
-      previousLightMasterEnableMillis = currentLightMasterEnableMillis;
-    }
-  }
-
   //check if disable screen's backlight as no key pressed for specified time
   if ((unsigned long)(millis() - lastKeyPressMillis) >= backLightIntervalMS) {
     io->disableBacklight();
@@ -162,6 +152,16 @@ void loop()
     io->clearScreen();
   }
 
+  //enable/disable automatic light functionality
+  unsigned long currentLightMasterEnableMillis = millis();
+  if ((unsigned long)(currentLightMasterEnableMillis  - previousLightMasterEnableMillis) >= lightMasterEnableIntervalMS) {
+    if (digitalRead(lightStateToggleButton)) {
+      commSystem->toggleLightMasterEnable();
+
+      previousLightMasterEnableMillis = currentLightMasterEnableMillis;
+    }
+  }
+
   //change functionality based on current mode
   if (currentMode != 0) {
     //reset currentDisplayMode to make sure that start in order when back at mode 0
@@ -177,6 +177,13 @@ void loop()
     if ((unsigned long)(currentMillis - previousMillis) >= displayModeIntervalMS) {
       io->setCursor(0, 2);
       io->print(F("Select one:"));
+
+      //display "L" if automatic light functionality is enabled
+      if(commSystem->getCurrentLightMasterEnabelState()){
+        io->setCursor(19, 2);
+        io->print(F("L"));
+      }
+      
       String name = modes[currentDisplayedMode]->getModeName();
       io->setCursor(0, 3);
       io->print(currentDisplayedMode);
