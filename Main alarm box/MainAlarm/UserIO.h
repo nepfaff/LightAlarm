@@ -91,6 +91,11 @@ class UserIO
       print(F("                    "));
     }
 
+    void clearField(byte column, byte row) {
+      setCursor(column, row);
+      print(F(" "));
+    }
+
     void enableBacklight() {
       screen->backlight();
     }

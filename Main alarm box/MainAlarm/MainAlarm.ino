@@ -184,7 +184,7 @@ void loop()
         io->print(F("A"));
       }else{
         //make sure that no invalid state is displayed
-        //io->clearRow(2); //add better clearing command
+        io->clearField(18, 2);
       }
       //display "L" if automatic light functionality is enabled
       if (commSystem->getCurrentLightMasterEnabelState()) {
@@ -192,7 +192,7 @@ void loop()
         io->print(F("L"));
       }else{
         //make sure that no invalid state is displayed
-        //io->clearRow(2);
+        io->clearField(19, 2);
       }
 
       String name = modes[currentDisplayedMode]->getModeName();
