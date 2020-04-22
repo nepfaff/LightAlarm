@@ -53,12 +53,20 @@ int currentDisplayedMode = 1; //don't display default mode 0
 const unsigned long backLightIntervalMS PROGMEM = 300000; //5min
 unsigned long lastKeyPressMillis{};
 
+//light master enable for automatic light functionality
+const byte lightStateToggleButton PROGMEM = 3;
+const unsigned long lightMasterEnableIntervalMS = 1000; //prevent multiple toggles caused by one button press
+unsigned long previousLightMasterEnableMillis{};
+
 void setup()
 {
   Serial.begin(9600);
 
   //add event to reset screen off timer when key is pressed
   keyIn->addEventListener(anyKeyPressed);
+
+  //used by external button (enable/disable light automatic light functionality)
+  pinMode(lightStateToggleButton, INPUT);
 
   //initialize pointers (need to do this after Serial.begin(9600) for it to work)
   logger = new SerialLogger();
@@ -85,6 +93,16 @@ void loop()
 {
   //display if an alarm is enabled
   //show by showing * in top right corner?
+
+  //enable/disable automatic light functionality
+  unsigned long currentLightMasterEnableMillis = millis();
+  if ((unsigned long)(currentLightMasterEnableMillis - previousLightMasterEnableMillis) >= lightMasterEnableIntervalMS) {
+    if (digitalRead(lightStateToggleButton)) {
+      commSystem->toggleLightMasterEnable();
+
+      previousLightMasterEnableMillis = currentLightMasterEnableMillis;
+    }
+  }
 
   //check if disable screen's backlight as no key pressed for specified time
   if ((unsigned long)(millis() - lastKeyPressMillis) >= backLightIntervalMS) {

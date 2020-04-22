@@ -50,11 +50,6 @@ class TimerMode : public IMode
         int minutesLeft = (int) ((timeLeftMS / (1000UL * 60UL)) % 60UL);
         int hoursLeft   = (int) (timeLeftMS / (1000UL * 60UL * 60UL));
 
-        Serial.println(timeLeftMS);
-        Serial.println(secondsLeft);
-        Serial.println(minutesLeft);
-        Serial.println(hoursLeft);
-
         io->print(F("Time left: "));
         io->printDigits(hoursLeft, true);
         io->printDigits(minutesLeft);

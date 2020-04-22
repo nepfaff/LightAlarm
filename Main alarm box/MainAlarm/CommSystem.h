@@ -9,6 +9,9 @@
 //used for bluetooth communication with light box
 SoftwareSerial *BTSerial;
 
+//keep track of current light master enable state in light box => will be reset automatically on reboot
+bool currentLightMasterEnabelState;
+
 const unsigned long enableLightIntervalMS PROGMEM = 60000;
 unsigned long previousLightEnableMS{};
 
@@ -26,6 +29,30 @@ class CommSystem
 
       BTSerial = new SoftwareSerial(42, 43); //RX | TX => RX beeds to be connected to TX and TX to RX for setup
       BTSerial->begin(38400);
+
+      //ensure that state is consistent with state in light box
+      resetLightMasterEnable();
+    }
+
+    //applies for automatic light functionality (manuel functinality unaffected)
+    void toggleLightMasterEnable(){
+      logger->logInfo("Toggeling light master enable");
+      if(currentLightMasterEnabelState){
+        BTSerial->write("M"); //M = change master light enable state to state passed as data argument
+        BTSerial->write(false);
+        currentLightMasterEnabelState = false;
+      }else{
+        BTSerial->write("M"); 
+        BTSerial->write(true);
+        currentLightMasterEnabelState = true;
+      }
+    }
+
+    //used to ensure that stored state is consistent with state in light box
+    void resetLightMasterEnable(){
+      //default state is true (enabled)
+      currentLightMasterEnabelState = false;
+      toggleLightMasterEnable();
     }
 
     void enableLightBasedOnDutyCycle(byte dutyCycle) const{

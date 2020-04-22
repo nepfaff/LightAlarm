@@ -22,35 +22,23 @@ void setup() {
   Serial.begin(9600);
   
   screen.init();
-  screen.backlight(); //disable when keypad not touched for 10min (then use flag to use first keypress solely to enable backlight again
-  //screen.noBacklight();
+  screen.backlight(); 
+
+  //pinMode(3, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(3), buttonPressed, RISING);
+  
 }
 
 void loop() {
-  //checking for pressed key
-  char key = keypad1.getKey();
- 
-  if(key){
-    screen.print(key);
-  }
+  /*int buttonState = digitalRead(3);
+  if(buttonState == HIGH){
+    Serial.print("Button pressed ");
+    Serial.println(buttonState);
+  }*/
   
-  /*screen.setCursor(0, 0); //column, row
-  screen.print("An alarm clock");
+}
 
-  int hours{15}, minutes{21};
-  screen.setCursor(10, 2);
-  screen.print(hours);
-  screen.print(":");
-  screen.print(minutes);
-
-  //add blinking underscore (use this when user is entering something e.g. setting new time for alarm)
-  //default location will be current cursor location (like printing text)
-  screen.cursor();
-  delay(500);
-  screen.noCursor();
-  delay(500);
-
-  //clears LCD screen and sets cursor to (0,0) => use this when want to display different content on screen (first clear old, then write new)
-  screen.clear();
-  delay(1000);*/
+void buttonPressed(){
+  Serial.println("Interrup called due to button pressed");
 }

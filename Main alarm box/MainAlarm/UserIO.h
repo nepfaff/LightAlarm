@@ -7,6 +7,7 @@
 #include "Keypad.h"
 
 #include "ILogger.h"
+#include "CommSystem.h"
 
 /*
    Provides combined interface for input from keypad and output to LCD screen.
