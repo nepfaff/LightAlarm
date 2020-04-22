@@ -178,12 +178,23 @@ void loop()
       io->setCursor(0, 2);
       io->print(F("Select one:"));
 
+      //display "A" if an alarm is enabled
+      if (alarmMode->isAnyAlarmEnabled()) {
+        io->setCursor(18, 2);
+        io->print(F("A"));
+      }else{
+        //make sure that no invalid state is displayed
+        //io->clearRow(2); //add better clearing command
+      }
       //display "L" if automatic light functionality is enabled
-      if(commSystem->getCurrentLightMasterEnabelState()){
+      if (commSystem->getCurrentLightMasterEnabelState()) {
         io->setCursor(19, 2);
         io->print(F("L"));
+      }else{
+        //make sure that no invalid state is displayed
+        //io->clearRow(2);
       }
-      
+
       String name = modes[currentDisplayedMode]->getModeName();
       io->setCursor(0, 3);
       io->print(currentDisplayedMode);

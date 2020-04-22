@@ -349,6 +349,17 @@ class AlarmMode : public IMode
       }
     }
 
+    //checks if any alarm is enabled
+    bool isAnyAlarmEnabled() const {
+      for (int i{}; i < currentAlarmQuantity; i++) {
+        if (alarms[i].getStatus())
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
     //checks whether it is time for an alarm to ring by comparing alarm time with current time
     //returns id of active alarm or 0 if no active alarm
     int getActiveAlarmId() const {
