@@ -14,7 +14,7 @@ class AlarmMode : public IMode
 {
   private:
     const static byte maxAlarmQuantity PROGMEM = 3;
-    const static byte timeToActivateLightMin PROGMEM = 1;
+    const static byte timeToActivateLightMin PROGMEM = 1; //change to larger value after testing!
 
     int currentAlarmQuantity{};
     int currentDisplayedAlarm{};

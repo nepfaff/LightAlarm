@@ -49,9 +49,16 @@ const unsigned long displayModeIntervalMS PROGMEM = 1500; //determines time betw
 unsigned long previousMillis{};
 int currentDisplayedMode = 1; //don't display default mode 0
 
+//time after last key press for screen's backlight to turn off
+const unsigned long backLightIntervalMS PROGMEM = 300000; //5min
+unsigned long lastKeyPressMillis{};
+
 void setup()
 {
   Serial.begin(9600);
+
+  //add event to reset screen off timer when key is pressed
+  keyIn->addEventListener(anyKeyPressed);
 
   //initialize pointers (need to do this after Serial.begin(9600) for it to work)
   logger = new SerialLogger();
@@ -78,6 +85,11 @@ void loop()
 {
   //display if an alarm is enabled
   //show by showing * in top right corner?
+
+  //check if disable screen's backlight as no key pressed for specified time
+  if ((unsigned long)(millis() - lastKeyPressMillis) >= backLightIntervalMS) {
+    io->disableBacklight();
+  }
 
   //logic for what happens if an alarm is active
   int activeAlarmId = alarmMode->getActiveAlarmId();
@@ -111,7 +123,7 @@ void loop()
   }
 
   //logic for what happens if the timer is over
-  if(timerMode->hasTimerFinished()){
+  if (timerMode->hasTimerFinished()) {
     io->clearScreen();
 
     commSystem->enableLightBasedOnDutyCycle(100); //dutyCycle = 100 corresponds to maximum brightness
@@ -195,7 +207,7 @@ void loop()
       timerMode->executeOption(currentOption);
       io->clearScreen();
     }
-    
+
     if (currentMode != 2) {
       io->clearScreen();
     }
@@ -214,4 +226,10 @@ void loop()
     currentMode = 0;
     logger->logInfo(F("Switched mode to default mode 0"));
   }
+}
+
+//turn of screen backlight when no key has been pressed for certain time
+void anyKeyPressed(KeypadEvent key) {
+  lastKeyPressMillis = millis();
+  io->enableBacklight();
 }
