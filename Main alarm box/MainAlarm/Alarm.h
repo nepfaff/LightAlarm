@@ -1,8 +1,6 @@
 #ifndef Alarm_h
 #define Alarm_h
 
-#include "Arduino.h"
-
 class Alarm
 {
 private:

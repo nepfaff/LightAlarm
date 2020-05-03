@@ -1,4 +1,7 @@
+#include "Arduino.h"
+
 #include "SerialLogger.h"
+#include "ILogger.h"
 
 virtual void SerialLogger::logError(String msg, String errorLocation) const override
 {

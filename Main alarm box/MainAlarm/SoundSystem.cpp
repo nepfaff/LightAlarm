@@ -1,4 +1,7 @@
+#include "Arduino.h"
+
 #include "SoundSystem.h"
+#include "ILogger.h"
 
 SoundSystem::SoundSystem(ILogger *_logger)
     : logger{_logger}

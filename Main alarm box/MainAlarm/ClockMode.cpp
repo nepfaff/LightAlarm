@@ -1,4 +1,10 @@
+#include "Arduino.h"
+#include "TimeLib.h"
+
 #include "ClockMode.h"
+#include "IMode.h"
+#include "ILogger.h"
+#include "UserIO.h"
 
 ClockMode::ClockMode(ILogger *_logger, UserIO *_io)
     : logger{_logger}, io(_io), IMode("Clock mode") {}

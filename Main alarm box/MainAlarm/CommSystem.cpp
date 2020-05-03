@@ -1,4 +1,8 @@
+#include "Arduino.h"
+#include "SoftwareSerial.h"
+
 #include "CommSystem.h"
+#include "ILogger.h"
 
 CommSystem::CommSystem(ILogger *_logger)
     : logger{_logger}

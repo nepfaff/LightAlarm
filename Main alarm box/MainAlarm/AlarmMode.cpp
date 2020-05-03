@@ -1,4 +1,12 @@
+#include "Arduino.h"
+
 #include "AlarmMode.h"
+#include "Alarm.h"
+#include "IMode.h"
+#include "ILogger.h"
+#include "UserIO.h"
+#include "CommSystem.h"
+#include "StorageSystem.h"
 
 AlarmMode::AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock, CommSystem *_commSystem, StorageSystem *_storageSystem)
     : logger{_logger}, io(_io), clock{_clock}, commSystem{_commSystem}, storageSystem{_storageSystem}, IMode("Alarm mode")

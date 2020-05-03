@@ -1,4 +1,11 @@
+#include "Arduino.h"
+#include "Wire.h"
+#include "LiquidCrystal_I2C.h"
+#include "Keypad.h"
+
 #include "UserIO.h"
+#include "ILogger.h"
+#include "CommSystem.h"
 
 bool UserIO::getTimeDigit(String callerFunction, String &timeContainer, int maxDigit)
 {

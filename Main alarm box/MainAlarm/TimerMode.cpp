@@ -1,4 +1,9 @@
+#include "Arduino.h"
+
 #include "TimerMode.h"
+#include "IMode.h"
+#include "ILogger.h"
+#include "UserIO.h"
 
 TimerMode::TimerMode(ILogger *_logger, UserIO *_io)
     : logger{_logger}, io(_io), isEnabled{false}, isPaused{false}, IMode("Timer mode") {}

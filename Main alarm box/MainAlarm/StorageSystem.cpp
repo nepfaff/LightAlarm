@@ -1,4 +1,8 @@
+#include "Arduino.h"
+#include "EEPROM.h"
+
 #include "StorageSystem.h"
+#include "ILogger.h"
 
 StorageSystem(ILogger *_logger)
     : logger{_logger} {}
