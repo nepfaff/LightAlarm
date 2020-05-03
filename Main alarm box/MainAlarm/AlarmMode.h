@@ -5,6 +5,7 @@
 
 #include "Alarm.h"
 #include "IMode.h"
+#include "ClockMode.h"
 #include "ILogger.h"
 #include "UserIO.h"
 #include "CommSystem.h"

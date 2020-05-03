@@ -9,7 +9,7 @@
 ClockMode::ClockMode(ILogger *_logger, UserIO *_io)
     : logger{_logger}, io(_io), IMode("Clock mode") {}
 
-void ClockMode::resetAll() override
+void ClockMode::resetAll()
 {
     changeTime(0, 0);
 }

@@ -3,6 +3,7 @@
 #include "AlarmMode.h"
 #include "Alarm.h"
 #include "IMode.h"
+#include "ClockMode.h"
 #include "ILogger.h"
 #include "UserIO.h"
 #include "CommSystem.h"
@@ -22,7 +23,7 @@ AlarmMode::AlarmMode(ILogger *_logger, UserIO *_io, ClockMode *_clock, CommSyste
     delete[] storedAlarms;
 }
 
-void AlarmMode::resetAll() override
+void AlarmMode::resetAll()
 {
     for (int i{}; i < maxAlarmQuantity; i++)
     {

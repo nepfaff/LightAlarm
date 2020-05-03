@@ -3,12 +3,12 @@
 
 #include "StorageSystem.h"
 #include "ILogger.h"
+#include "Alarm.h"
 
-StorageSystem(ILogger *_logger)
+StorageSystem::StorageSystem(ILogger *_logger)
     : logger{_logger} {}
 
-//EEPROM
-void clearEEPROM()
+void StorageSystem::clearEEPROM()
 {
     for (int i = 0; i < EEPROM.length(); i++)
     {
@@ -16,12 +16,12 @@ void clearEEPROM()
     }
 }
 
-byte retrieveStoredAlarmQuantityEEPROM() const
+byte StorageSystem::retrieveStoredAlarmQuantityEEPROM() const
 {
     return EEPROM.read(storedAlarmQuantityEEPROMAddress);
 }
 
-void updateAlarmsEEPROM(const Alarm *alarms, byte currentAlarmQuantity) const
+void StorageSystem::updateAlarmsEEPROM(const Alarm *alarms, byte currentAlarmQuantity) const
 {
     EEPROM.update(storedAlarmQuantityEEPROMAddress, currentAlarmQuantity);
 
@@ -32,7 +32,7 @@ void updateAlarmsEEPROM(const Alarm *alarms, byte currentAlarmQuantity) const
     }
 }
 
-Alarm *retrieveAlarmsEEPROM(byte storedAlarmQuantity) const
+Alarm *StorageSystem::retrieveAlarmsEEPROM(byte storedAlarmQuantity) const
 {
     byte id{}, hour{}, minute{};
     bool isEnabled{};

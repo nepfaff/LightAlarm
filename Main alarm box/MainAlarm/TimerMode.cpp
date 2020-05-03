@@ -8,7 +8,7 @@
 TimerMode::TimerMode(ILogger *_logger, UserIO *_io)
     : logger{_logger}, io(_io), isEnabled{false}, isPaused{false}, IMode("Timer mode") {}
 
-void resetAll() override
+void TimerMode::resetAll()
 {
     timeAtStartMS = 0;
     timerDurationMS = 0;

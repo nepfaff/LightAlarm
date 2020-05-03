@@ -5,6 +5,7 @@
 #include "EEPROM.h"
 
 #include "ILogger.h"
+#include "Alarm.h"
 
 /*
    Responsible for everything that involves storage/memory.

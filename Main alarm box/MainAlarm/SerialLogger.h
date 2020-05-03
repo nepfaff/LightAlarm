@@ -11,9 +11,9 @@
 class SerialLogger : public ILogger
 {
 public:
-  virtual void logError(String msg, String errorLocation) const override;
+  void logError(String msg, String errorLocation) const override;
 
-  virtual void logInfo(String msg) const override;
+  void logInfo(String msg) const override;
 };
 
 #endif

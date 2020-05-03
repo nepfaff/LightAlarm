@@ -52,7 +52,7 @@ void CommSystem::enableLightBasedOnDutyCycle(byte dutyCycle) const
     BTSerial->write(dutyCycle);
 }
 
-void CommSystem::enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin) const
+void CommSystem::enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin)
 {
     //only enable light every certain interval (otherwise bluetooth buffer will overflow and data will be corrupted)
     unsigned long currentLightEnableMS = millis();

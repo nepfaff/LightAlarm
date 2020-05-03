@@ -41,7 +41,7 @@ public:
   void enableLightBasedOnDutyCycle(byte dutyCycle) const;
 
   //tells the light box to slowly increase its light's duty cycle till the alarm time is reached
-  void enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin) const;
+  void enableLightBasedOnTimeTillAlarmMin(int timeTillAlarmMin);
 
   //tells the light box to turn of any light that is currently on
   void disableLight() const;
