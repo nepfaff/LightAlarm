@@ -10,10 +10,14 @@
 #include "CommSystem.h"
 #include "StorageSystem.h"
 
+/*
+  Provides an alarm functionality.
+  The user is able to set multiple alarms (max quantity is hard coded below but can be changed without breaking the functionality).
+*/
 class AlarmMode : public IMode
 {
 private:
-  const static byte maxAlarmQuantity PROGMEM = 3;
+  const static byte maxAlarmQuantity PROGMEM = 3;        //current maximum supported quantity is 9
   const static byte timeToActivateLightMin PROGMEM = 20; //change based on testing experience
 
   int currentAlarmQuantity{};
