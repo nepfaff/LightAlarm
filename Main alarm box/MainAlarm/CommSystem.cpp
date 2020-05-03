@@ -1,3 +1,5 @@
+#include "CommSystem.h"
+
 CommSystem::CommSystem(ILogger *_logger)
     : logger{_logger}
 {
