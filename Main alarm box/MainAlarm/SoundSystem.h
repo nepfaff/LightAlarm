@@ -8,30 +8,22 @@
 const byte activeBuzzerPin PROGMEM = 2;
 
 /*
-   rings buzzers, plays sd audio files, etc.
+   Responsible for ringing buzzers, playing sd audio files.
+   All functionality that involves sound specific, external hardware should be added here.
 */
 class SoundSystem
 {
-  private:
-    ILogger *logger{};
+private:
+  ILogger *logger{};
 
-  public:
-    SoundSystem(ILogger *_logger)
-      : logger{_logger} {
-      pinMode(activeBuzzerPin, OUTPUT);
-    }
+public:
+  SoundSystem(ILogger *_logger);
 
-    void startRingingBuzzerAlarm()
-    {
-      logger->logInfo(F("Starting to ring buzzer alarm"));
-      digitalWrite(activeBuzzerPin, HIGH);
-    }
+  //enables the buzzer alarm
+  void startRingingBuzzerAlarm();
 
-    void stopRingingBuzzerAlarm()
-    {
-      logger->logInfo(F("Stopping to ring buzzer alarm"));
-      digitalWrite(activeBuzzerPin, LOW);
-    }
+  //disables the buzzer alarm
+  void stopRingingBuzzerAlarm();
 };
 
 #endif
