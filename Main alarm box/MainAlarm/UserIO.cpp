@@ -1,6 +1,6 @@
 #include "UserIO.h"
 
-bool getTimeDigit(String callerFunction, String &timeContainer, int maxDigit)
+bool UserIO::getTimeDigit(String callerFunction, String &timeContainer, int maxDigit)
 {
     char input = getValidDigitOrHashBlocking();
     if (input == '#')
@@ -31,7 +31,7 @@ bool getTimeDigit(String callerFunction, String &timeContainer, int maxDigit)
     }
 }
 
-UserIO(ILogger *_logger, Keypad *_keypad)
+UserIO::UserIO(ILogger *_logger, Keypad *_keypad)
     : logger{_logger}, keyIn{_keypad}
 {
 
@@ -41,32 +41,32 @@ UserIO(ILogger *_logger, Keypad *_keypad)
     screen->backlight();
 }
 
-void print(String data)
+void UserIO::print(String data)
 {
     screen->print(data);
 }
-void print(char data)
+void UserIO::print(char data)
 {
     screen->print(data);
 }
-void print(int data)
+void UserIO::print(int data)
 {
     screen->print(data);
 }
-void print(float data)
+void UserIO::print(float data)
 {
     screen->print(data);
 }
-void print(byte data)
+void UserIO::print(byte data)
 {
     screen->print(data);
 }
-void print(double data)
+void UserIO::print(double data)
 {
     screen->print(data);
 }
 
-void printDigits(int digits, bool isFirst = false) const
+void UserIO::printDigits(int digits, bool isFirst = false) const
 {
     if (!isFirst)
     {
@@ -79,52 +79,52 @@ void printDigits(int digits, bool isFirst = false) const
     screen->print(digits);
 }
 
-void setCursor(byte column, byte row)
+void UserIO::setCursor(byte column, byte row)
 {
     screen->setCursor(column, row);
 }
 
-void clearRow(byte row)
+void UserIO::clearRow(byte row)
 {
     setCursor(0, row);
     print(F("                    "));
 }
 
-void clearField(byte column, byte row)
+void UserIO::clearField(byte column, byte row)
 {
     setCursor(column, row);
     print(F(" "));
 }
 
-void enableBacklight()
+void UserIO::enableBacklight()
 {
     screen->backlight();
 }
-void disableBacklight()
+void UserIO::disableBacklight()
 {
     screen->noBacklight();
 }
 
-void showCursor()
+void UserIO::showCursor()
 {
     screen->cursor();
 }
-void hideCursor()
+void UserIO::hideCursor()
 {
     screen->noCursor();
 }
 
-void clearScreen()
+void UserIO::clearScreen()
 {
     screen->clear();
 }
 
-char getKey() const
+char UserIO::getKey() const
 {
     return keyIn->getKey();
 }
 
-bool enteredHash()
+bool UserIO::enteredHash()
 {
     if (keyIn->getKey() == '#')
     {
@@ -133,7 +133,7 @@ bool enteredHash()
     return false;
 }
 
-char getValidDigitOrHash()
+char UserIO::getValidDigitOrHash()
 {
     char key = keyIn->getKey();
     if (isdigit(key) || key == '#')
@@ -147,7 +147,7 @@ char getValidDigitOrHash()
     return 0;
 }
 
-char getValidDigitOrHashBlocking()
+char UserIO::getValidDigitOrHashBlocking()
 {
     char key = keyIn->waitForKey();
     if (isdigit(key) || key == '#')
@@ -158,7 +158,7 @@ char getValidDigitOrHashBlocking()
     return 0;
 }
 
-int getValidModeInt(const int modeNumber) const
+int UserIO::getValidModeInt(const int modeNumber) const
 {
     char key = keyIn->getKey();
     if (!key)
@@ -178,7 +178,7 @@ int getValidModeInt(const int modeNumber) const
     return 0; //0 indicates default mode
 }
 
-byte selectOption(byte numberOfOptions)
+byte UserIO::selectOption(byte numberOfOptions)
 {
     char input = getValidDigitOrHash();
     if (input == '#')
@@ -195,7 +195,7 @@ byte selectOption(byte numberOfOptions)
     }
 }
 
-int *getTime()
+int *UserIO::getTime()
 {
     String hour{}, minute{};
 
@@ -256,7 +256,7 @@ int *getTime()
     return time;
 }
 
-int *getHoursMinutesSeconds()
+int *UserIO::getHoursMinutesSeconds()
 {
     String hours{}, minutes{}, seconds{};
 
