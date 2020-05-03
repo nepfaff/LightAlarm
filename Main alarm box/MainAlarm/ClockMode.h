@@ -13,58 +13,27 @@
 */
 class ClockMode : public IMode
 {
-  private:
-    ILogger *logger;
-    UserIO *io;
+private:
+  ILogger *logger;
+  UserIO *io;
 
-  public:
-    ClockMode(ILogger *_logger, UserIO *_io)
-      : logger{_logger}, io(_io), IMode("Clock mode") {}
+public:
+  ClockMode(ILogger *_logger, UserIO *_io);
 
-    void resetAll() override
-    {
-      changeTime(0, 0);
-    }
+  void resetAll() override;
 
-    //asks user to input new hour and minute before setting time to user input
-    void changeTimeFromUserInput()
-    {
-      int* newTime = io->getTime();
-      if (!newTime) {
-        return;
-      }
+  //asks user to input new hour and minute, before setting time to user input
+  void changeTimeFromUserInput();
 
-      int hour{newTime[0]}, minute{newTime[1]};
-      delete[] newTime;
+  //sets time according to function arguments hour and minute
+  void changeTime(int hour, int minute);
 
-      //hour, minute, second, day, month, year
-      setTime(hour, minute, 0, 0, 0, 0);
-    }
-    //sets time according to function arguments hour and minute
-    void changeTime(int hour, int minute)
-    {
-      //hour, minute, second, day, month, year
-      setTime(hour, minute, 0, 0, 0, 0);
-    }
+  //displays hour:minute in digital format
+  void digitalClockDisplay() const;
 
-    void digitalClockDisplay() const
-    {
-      io->setCursor(0, 0);
-      io->print(F("Current time: "));
-      io->printDigits(hour(), true);
-      io->printDigits(minute());
-      io->print(" ");
-    }
-
-    int getHour() const
-    {
-      return hour();
-    }
-
-    int getMinute() const
-    {
-      return minute();
-    }
+  //getters
+  int getHour() const;
+  int getMinute() const;
 };
 
 #endif
