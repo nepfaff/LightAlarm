@@ -1,0 +1,24 @@
+* C:\Users\konta\Desktop\LightAlarm\External Light\LED dimmer using MOSFET PWM - with current mirror.asc
+MOSFET1 N006 N007 0 0 IRF510
+Vcc N001 0 12
+V§Arduino-PWM N007 0 PULSE(0 5 0 0 0 0.075 0.1)
+Rg 0 N007 10k
+D§LED1 N001 N002 LUW-W5AP
+D§LED2 N001 N003 LUW-W5AP
+Q1 N002 N002 N005 0 NPN
+Q2 N003 N002 N005 0 NPN
+R2 N005 N006 50
+Q3 N004 N002 N005 0 NPN
+D§LED3 N001 N004 LUW-W5AP
+.model D D
+.lib C:\Users\konta\Documents\LTspiceXVII\lib\cmp\standard.dio
+.model NPN NPN
+.model PNP PNP
+.lib C:\Users\konta\Documents\LTspiceXVII\lib\cmp\standard.bjt
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\konta\Documents\LTspiceXVII\lib\cmp\standard.mos
+.tran 1
+* Current mirror sets current through LEDs and ensures that all LED wires have same current.\n \nJust need to ensure that LEDs still have enough voltage across.
+.backanno
+.end
