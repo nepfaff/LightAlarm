@@ -5,29 +5,29 @@
 
 /*
   Interface that all modes for alarm box should be derived from.
-  A mode is a mode that the user can enter (through the main menu), to acsess a set of mode-specific functionalities.  
+  A mode is a mode that the user can enter (through the main menu), to acsess a set of mode-specific functionalities.
   This allows for dynamic polymorphism.
 */
 class IMode
 {
-private:
-  //display name of mode
-  String modeName;
+  private:
+    //display name of mode
+    String modeName;
 
-public:
-  IMode()
+  public:
+    IMode()
       : modeName{"Unspecified"} {}
-  IMode(String _modeName)
+    IMode(String _modeName)
       : modeName{_modeName} {}
-  virtual ~IMode() {}
+    virtual ~IMode() {}
 
-  String getModeName()
-  {
-    return modeName;
-  }
+    String getModeName()
+    {
+      return modeName;
+    }
 
-  //reset all internal storage to default values
-  virtual void resetAll() = 0;
+    //reset all internal storage to default values
+    virtual void resetAll() = 0;
 };
 
 #endif

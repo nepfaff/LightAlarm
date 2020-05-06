@@ -10,10 +10,10 @@
 */
 class SerialLogger : public ILogger
 {
-public:
-  void logError(String msg, String errorLocation) const override;
+  public:
+    void logError(String msg, String errorLocation) const override;
 
-  void logInfo(String msg) const override;
+    void logInfo(String msg) const override;
 };
 
 #endif

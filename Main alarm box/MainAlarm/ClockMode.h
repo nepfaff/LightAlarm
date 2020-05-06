@@ -13,27 +13,27 @@
 */
 class ClockMode : public IMode
 {
-private:
-  ILogger *logger;
-  UserIO *io;
+  private:
+    ILogger *logger;
+    UserIO *io;
 
-public:
-  ClockMode(ILogger *_logger, UserIO *_io);
+  public:
+    ClockMode(ILogger *_logger, UserIO *_io);
 
-  void resetAll() override;
+    void resetAll() override;
 
-  //asks user to input new hour and minute, before setting time to user input
-  void changeTimeFromUserInput();
+    //asks user to input new hour and minute, before setting time to user input
+    void changeTimeFromUserInput();
 
-  //sets time according to function arguments hour and minute
-  void changeTime(int hour, int minute);
+    //sets time according to function arguments hour and minute
+    void changeTime(int hour, int minute);
 
-  //displays hour:minute in digital format
-  void digitalClockDisplay() const;
+    //displays hour:minute in digital format
+    void digitalClockDisplay() const;
 
-  //getters
-  int getHour() const;
-  int getMinute() const;
+    //getters
+    int getHour() const;
+    int getMinute() const;
 };
 
 #endif

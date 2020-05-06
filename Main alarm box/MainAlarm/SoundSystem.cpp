@@ -4,19 +4,19 @@
 #include "ILogger.h"
 
 SoundSystem::SoundSystem(ILogger *_logger)
-    : logger{_logger}
+  : logger{_logger}
 {
-    pinMode(activeBuzzerPin, OUTPUT);
+  pinMode(activeBuzzerPin, OUTPUT);
 }
 
 void SoundSystem::startRingingBuzzerAlarm()
 {
-    logger->logInfo(F("Starting to ring buzzer alarm"));
-    digitalWrite(activeBuzzerPin, HIGH);
+  logger->logInfo(F("Starting to ring buzzer alarm"));
+  digitalWrite(activeBuzzerPin, HIGH);
 }
 
 void SoundSystem::stopRingingBuzzerAlarm()
 {
-    logger->logInfo(F("Stopping to ring buzzer alarm"));
-    digitalWrite(activeBuzzerPin, LOW);
+  logger->logInfo(F("Stopping to ring buzzer alarm"));
+  digitalWrite(activeBuzzerPin, LOW);
 }

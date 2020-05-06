@@ -182,7 +182,7 @@ void loop()
       if (alarmMode->isAnyAlarmEnabled()) {
         io->setCursor(18, 2);
         io->print(F("A"));
-      }else{
+      } else {
         //make sure that no invalid state is displayed
         io->clearField(18, 2);
       }
@@ -190,7 +190,7 @@ void loop()
       if (commSystem->getCurrentLightMasterEnabelState()) {
         io->setCursor(19, 2);
         io->print(F("L"));
-      }else{
+      } else {
         //make sure that no invalid state is displayed
         io->clearField(19, 2);
       }

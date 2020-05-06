@@ -13,17 +13,17 @@ const byte activeBuzzerPin PROGMEM = 2;
 */
 class SoundSystem
 {
-private:
-  ILogger *logger{};
+  private:
+    ILogger *logger{};
 
-public:
-  SoundSystem(ILogger *_logger);
+  public:
+    SoundSystem(ILogger *_logger);
 
-  //enables the buzzer alarm
-  void startRingingBuzzerAlarm();
+    //enables the buzzer alarm
+    void startRingingBuzzerAlarm();
 
-  //disables the buzzer alarm
-  void stopRingingBuzzerAlarm();
+    //disables the buzzer alarm
+    void stopRingingBuzzerAlarm();
 };
 
 #endif
