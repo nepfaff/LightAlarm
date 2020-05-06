@@ -4,14 +4,14 @@
 SoftwareSerial BTSerial(2, 3); //RX | TX => arduino RX must be connected to HC-05 TX, and TX to RX
 
 //define pins
-const byte mainLightPin PROGMEM = A0;
+const byte mainLightPin PROGMEM = 6; //must be PWM compatible pin
 const byte masterLigthEnabledIndicatorLED PROGMEM = 4;
 
 //master enable/disable automatic light functionality (does not apply to manuel light functionality)
 bool masterLightEnabled = true;
 
 //variables to store ms till duty cycle
-unsigned long dutyCycle25, dutyCycle50, dutyCycle75, dutyCycle100;
+unsigned long dutyCycle10, dutyCycle25, dutyCycle50, dutyCycle100;
 bool lightByTimeEn{};
 
 void setup() {
@@ -25,7 +25,7 @@ void setup() {
 }
 
 void loop() {
-  
+
   if(masterLightEnabled){
     digitalWrite(masterLigthEnabledIndicatorLED, HIGH);
   }else{
@@ -84,6 +84,8 @@ void loop() {
       analogWrite(mainLightPin, 127);
     } else if (currentTime > dutyCycle25) {
       analogWrite(mainLightPin, 64);
+    } else if (currentTime > dutyCycle10) {
+      analogWrite(mainLightPin, 26);
     }
   }
 }
@@ -91,9 +93,9 @@ void loop() {
 void computeTimeForDutyCycles(unsigned long timeTillFullyOnMS) {
   unsigned long timeForOneCycle = timeTillFullyOnMS / 3; //have 3 duty cycles till duty cycle = 100
   unsigned long currentTime = millis();
-  dutyCycle25 = currentTime; //start this now
-  dutyCycle50 = currentTime + timeForOneCycle;
-  dutyCycle75 = currentTime + timeForOneCycle * 2;
+  dutyCycle10 = currentTime; //start this now
+  dutyCycle25 = currentTime + timeForOneCycle;
+  dutyCycle50 = currentTime + timeForOneCycle * 2;
   dutyCycle100 = currentTime + timeForOneCycle * 3;
 }
 
