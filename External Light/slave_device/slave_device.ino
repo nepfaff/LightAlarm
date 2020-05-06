@@ -47,7 +47,7 @@ void loop() {
 
         //turn of light if currently on
         if(!masterLightEnabled){
-          disableLight();
+          disableLigth();
         }
         break;
       case 'T': //enable light based on time argument from data (calculate switch in duty cycle based on time)
