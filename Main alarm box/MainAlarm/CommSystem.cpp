@@ -26,7 +26,7 @@ void CommSystem::toggleLightMasterEnable()
     if (currentLightMasterEnabelState)
     {
         BTSerial->write("M"); //M = change master light enable state to state passed as data argument
-        BTSerial->write(false);
+        BTSerial->write(false); //This will also turn of the light, if it is currently on
         currentLightMasterEnabelState = false;
     }
     else

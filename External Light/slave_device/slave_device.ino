@@ -44,6 +44,11 @@ void loop() {
         Serial.println(data);
 
         masterLightEnabled = data;
+
+        //turn of light if currently on
+        if(!masterLightEnabled){
+          disableLight();
+        }
         break;
       case 'T': //enable light based on time argument from data (calculate switch in duty cycle based on time)
         if (masterLightEnabled) {
@@ -91,7 +96,7 @@ void loop() {
 }
 
 void computeTimeForDutyCycles(unsigned long timeTillFullyOnMS) {
-  unsigned long timeForOneCycle = timeTillFullyOnMS / 3; //have 3 duty cycles till duty cycle = 100
+  unsigned long timeForOneCycle = timeTillFullyOnMS / 4; //have 4 different duty cycles
   unsigned long currentTime = millis();
   dutyCycle10 = currentTime; //start this now
   dutyCycle25 = currentTime + timeForOneCycle;

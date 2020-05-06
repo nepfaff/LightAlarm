@@ -9,7 +9,7 @@
 #include "UserIO.h"
 
 /*
-    Functionality involving the current time
+    Functionality involving the current time.
 */
 class ClockMode : public IMode
 {

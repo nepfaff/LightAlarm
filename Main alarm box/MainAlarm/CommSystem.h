@@ -29,7 +29,7 @@ public:
 
   bool getCurrentLightMasterEnabelState() const;
 
-  //turns off ability to enable/disable light from light box
+  //turns off ability to enable/disable light from light box + turns of light if it is currently on
   //applies for automatic light functionality (manuel functinality unaffected)
   void toggleLightMasterEnable();
 
