@@ -330,11 +330,17 @@ void AlarmMode::changeExistingAlarmStatus(bool newStatus)
 
       int alarmIdx{(int)input - 49}; //alarm index in alarms[] (alarm number - 1)
       alarms[alarmIdx].setStatus(newStatus);
+
+      //disable light that was enabled due to an alarm ringing soon
+      if (!newStatus && checkIfActivatedLightByAlarm(alarms[alarmIdx]))
+      {
+        commSystem->disableLight();
+      }
     }
     else
     {
       //restart user input
-      deleteExistingAlarm();
+      changeExistingAlarmStatus(newStatus);
     }
   }
 }
@@ -433,7 +439,7 @@ bool AlarmMode::checkIfActivatedLightByAlarm(const Alarm &alarm) const
   //compare with current time (already know that alarm still enabled)
   if (activateHour == clock->getHour() && activateMinute < clock->getMinute()) {
     return true;
-  } else if ((activeHour - 1) == clock->getHour()) {
+  } else if ((activateHour - 1) == clock->getHour()) {
     return true;
   } else {
     return false;

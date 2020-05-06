@@ -62,12 +62,15 @@ class AlarmMode : public IMode
     void createNewAlarm();
 
     //option 3
+    //deletes specified alarm and disables light if necessary
     void deleteExistingAlarm();
 
     //option 4 and 5 (true to enable, false to disable)
+    //if disable, it also disables light if necessary
     void changeExistingAlarmStatus(bool newStatus);
 
     //option 6
+    //deletes alarms and disables light if necessary
     void deleteAllExistingAlarms();
 
     //true to enable, false to disable
