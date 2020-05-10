@@ -1,0 +1,9 @@
+* C:\Users\konta\Desktop\LightAlarm\External Light\Draft1.asc
+I1 0 N001 PULSE(0 10 0 1u 1u .1 .3)
+R1 N001 0 1
+R2 N002 0 100k
+R3 N002 N001 1k
+C1 N002 0 10µF
+.tran .2
+.backanno
+.end

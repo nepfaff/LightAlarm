@@ -12,7 +12,7 @@ bool masterLightEnabled = true;
 
 //variables to store ms till duty cycle
 unsigned long dutyCycle10, dutyCycle25, dutyCycle50, dutyCycle100;
-bool lightByTimeEn{};
+bool lightByTimeEn = false;
 
 void setup() {
   //serial used for master-slave bluetooth communication                                                        
@@ -45,8 +45,7 @@ void loop() {
 
         masterLightEnabled = data;
 
-        //turn of light if currently on
-        if(!masterLightEnabled){
+        if(!data){
           disableLigth();
         }
         break;
